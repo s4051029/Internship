@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--<color name="colorPrimaryDark">#f0644f</color>-->
+    <color name="colorPrimary">#D50000</color>
+    <color name="colorPrimaryDark">#A01420</color>
+    <color name="news_date_background">#6D6D6D</color>
+    <color name="news_background">#D6D6D6</color>
+    <color name="approove_background_color">#00E676</color>
+    <color name="decline_background_color">#C62828</color>
+    <color name="pink_color_background">#E91E63</color>
+    <color name="test_color">#616161</color>
+</resources>

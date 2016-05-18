@@ -1,0 +1,135 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:background="@color/news_background"
+              android:orientation="vertical"
+             tools:context="com.mirrorchannelth.internship.fragment.TaskFragment">
+    <!--3D3D3D-->
+    <include layout="@layout/home_toolbar">
+
+
+    </include>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="10dp"
+            android:hint="หัวข้อ"
+            android:layout_margin="0dp"
+            android:textSize="14sp"
+            style="@style/EditTextCustomeStyle"
+            />
+
+
+        <EditText
+            android:hint="วันที่"
+            android:textSize="14sp"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="10dp"
+            android:layout_margin="0dp"
+            style="@style/EditTextCustomeStyle"
+            />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:hint="ระยะเวลา"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1"
+            android:textSize="14sp"
+            android:layout_margin="0dp"
+            style="@style/EditTextCustomeStyle"
+
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ชั่วโมง"
+            android:layout_marginRight="16dp"
+            />
+
+
+    </LinearLayout>
+
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginLeft="10dp"
+            android:hint="รายละเอียด"
+            android:textSize="14sp"
+            android:gravity="top|left"
+            android:layout_margin="0dp"
+            style="@style/EditTextCustomeStyle"
+            />
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:orientation="vertical"
+    android:paddingLeft="10dp"
+    android:layout_height="wrap_content">
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    >
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/pink_circle_shape"
+        >
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_photo_camera_white_24dp"
+            android:layout_gravity="center"
+            android:id="@+id/cameraButton"
+            />
+
+    </FrameLayout>
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/pink_circle_shape"
+        android:layout_marginLeft="15dp"
+
+        >
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_image_white_24dp"
+            android:layout_gravity="center"
+            android:id="@+id/imageButton"
+            />
+
+    </FrameLayout>
+    
+    
+</LinearLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_launcher"
+        android:id="@+id/image"
+        android:layout_marginTop="10dp"
+        />
+
+</LinearLayout>
+   <RelativeLayout
+       android:layout_width="match_parent"
+       android:layout_height="match_parent">
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="บันทึก"
+        android:layout_centerInParent="true"
+    />
+   </RelativeLayout>
+
+</LinearLayout>
