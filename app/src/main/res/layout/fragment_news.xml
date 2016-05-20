@@ -1,21 +1,38 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:orientation="vertical"
               android:background="@color/white"
+              app:layout_behavior="@string/appbar_scrolling_view_behavior"
               tools:context="com.mirrorchannelth.internship.fragment.NewsFragment">
 
     <!--&lt;!&ndash; TODO: Update blank fragment layout &ndash;&gt;-->
     <!-- -->
-    <include layout="@layout/home_toolbar"/>
+    <include layout="@layout/home_toolbar" android:id="@+id/toolbarNews"/>
 
     <com.aspsine.irecyclerview.IRecyclerView
         android:id="@+id/rcNews"
         android:background="@color/white"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        />
+        android:layout_below="@id/toolbarNews"
+    />
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/coordinatorLayout"
+        android:layout_below="@id/toolbarNews"
+        android:visibility="gone"
+    >
 
-</LinearLayout>
+    </android.support.design.widget.CoordinatorLayout>
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:id="@+id/progressBar"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        android:indeterminateDrawable="@drawable/progressbar"
+        android:layout_height="wrap_content"/>
+
+</RelativeLayout>

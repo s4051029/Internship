@@ -1,5 +1,8 @@
 package com.mirrorchannelth.internship.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -45,7 +48,7 @@ public class NewsBean {
     public void AddNewsFromFront(JSONObject jsonObject){
         pageId = jsonObject.optString("page_id");
         limit = jsonObject.optInt("limit");
-        JSONArray news = jsonObject.optJSONArray("activity_list");
+        JSONArray news = jsonObject.optJSONArray("news");
         if(news !=null) {
             for (int i = 0; i < news.length(); i++) {
                 JSONObject newsTmp = news.optJSONObject(i);
@@ -53,8 +56,6 @@ public class NewsBean {
                 if(!newsList.contains(newsItem)) {
                     newsList.add(i, newsItem);
                 }
-
-
             }
         }
     }

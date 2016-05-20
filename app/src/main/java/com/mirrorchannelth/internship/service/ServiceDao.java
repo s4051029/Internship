@@ -15,7 +15,7 @@ public class ServiceDao {
 
     }
 
-    public void requestNews(String token_key, String userId, String userType, String userGroup, String pageId, Connection.OnConnectionCallBackListener listener){
+    public void requestNews(String pageId, Connection.OnConnectionCallBackListener listener, UserProfile userProfile){
         connection = new Connection(endpoint);
 
         connection.setDelayed(500);
@@ -23,10 +23,10 @@ public class ServiceDao {
         connection.addPostData("android_id", "1");
         connection.addPostData("mac_id", "1");
         connection.addPostData("device_type", "A:android");
-        connection.addPostData("token_key", token_key);
-        connection.addPostData("user_id", userId);
-        connection.addPostData("user_group", userGroup);
-        connection.addPostData("user_type", userType);
+        connection.addPostData("token_key", userProfile.getToken_key());
+        connection.addPostData("user_id", userProfile.getUser_id());
+        connection.addPostData("user_group", userProfile.getUser_group());
+        connection.addPostData("user_type", userProfile.getUser_type());
         connection.addPostData("page_id", pageId);
         connection.setOnConnectionCallBackListener(listener);
         connection.execute();

@@ -40,5 +40,7 @@
     <string name="user_toolbar_title">ผู้ฝึกงาน</string>
     <string name="task_history_employee_toolbar_title">สรุปการทำงาน</string>
     <string name="add_activity_toolbar_title">เพิ่มกิจกรรม</string>
+    <string name="no_internet_connection">No internet connection</string>
+    <string name="content_empty">Content is empty</string>
 
 </resources>

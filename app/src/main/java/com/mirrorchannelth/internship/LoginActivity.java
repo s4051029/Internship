@@ -86,6 +86,7 @@ public class LoginActivity extends AppCompatActivity implements Connection.OnCon
                 ShareData.setUserProfile(userProfile);
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
+                finish();
             } else {
                 WindowsUtil.defaultAlertDialog(getString(R.string.default_dialog_header), getString(R.string.login_username_incorrect), getString(R.string.default_label_dialog_button), LoginActivity.this);
             }

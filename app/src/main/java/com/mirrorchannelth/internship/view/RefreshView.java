@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.aspsine.irecyclerview.RefreshTrigger;
@@ -19,6 +20,7 @@ public class RefreshView extends LinearLayout implements RefreshTrigger {
     private Context context;
     private LayoutInflater inflater;
     private LinearLayout view ;
+    private ProgressBar progressBar;
     public RefreshView(Context context) {
         super(context);
         this.context = context;
@@ -46,7 +48,7 @@ public class RefreshView extends LinearLayout implements RefreshTrigger {
     private void initLayout() {
         inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         view = (LinearLayout) inflater.inflate(R.layout.layout_refresh, this);
-
+        progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
     }
 
 

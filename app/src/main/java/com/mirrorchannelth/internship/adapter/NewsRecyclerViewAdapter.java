@@ -41,6 +41,9 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter<NewsRecyclerVi
         this.context = context;
         this.itemListener = itemListener;
     }
+    public void setDataSource(NewsBean newsBean){
+        this.newsBean = newsBean;
+    }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -59,8 +62,12 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter<NewsRecyclerVi
             holder.shortDescriptionTextview.setText(news.getNewsShortDescription());
             Date newsDate = news.getNewsDate();
             holder.dateView.setDate(newsDate);
-            Picasso.with(context).load("https://metrouk2.files.wordpress.com/2015/09/150902_likemanutd_535x301_v4.png")
-                    .into(holder.newsImageview);
+
+            Picasso.with(context).load("http://image.dek-d.com/25/1089566/110621445")
+                    .placeholder(context.getResources().getDrawable( R.drawable.placeholder ))
+                    .error(context.getResources().getDrawable( R.drawable.placeholder ))
+                    .into(holder.newsImageview)
+            ;
             holder.newsImageview.setAdjustViewBounds(true);
             holder.mainView.setVisibility(View.VISIBLE);
 
