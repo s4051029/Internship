@@ -14,12 +14,18 @@ import com.mirrorchannelth.internship.R;
 public class AnimationUtil {
 
     public static AnimationSet animationSlideUp(Context context){
-        Animation slideup = AnimationUtils.loadAnimation(context, R.anim.from_bottom);
-        slideup.setInterpolator(new AccelerateDecelerateInterpolator());
-        Animation fadeIn = AnimationUtils.loadAnimation(context, R.anim.fade_in);
-        AnimationSet animationSetIn = new AnimationSet(false);
-        animationSetIn.addAnimation(fadeIn);
-        animationSetIn.addAnimation(slideup);
+        AnimationSet animationSetIn = null;
+        try {
+            Animation slideup = AnimationUtils.loadAnimation(context, R.anim.from_bottom);
+            slideup.setInterpolator(new AccelerateDecelerateInterpolator());
+            Animation fadeIn = AnimationUtils.loadAnimation(context, R.anim.fade_in);
+            animationSetIn = new AnimationSet(false);
+            animationSetIn.addAnimation(fadeIn);
+            animationSetIn.addAnimation(slideup);
+
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
         return animationSetIn;
     }
 

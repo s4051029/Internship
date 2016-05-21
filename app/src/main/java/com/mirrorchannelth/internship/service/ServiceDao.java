@@ -71,5 +71,42 @@ public class ServiceDao {
 
     }
 
+    public void getTaskList(UserProfile userProfile, String pageId, String taskUserId, Connection.OnConnectionCallBackListener listener){
+        connection = new Connection(endpoint);
+
+        connection.setDelayed(500);
+        connection.addPostData("function", "taskList");
+        connection.addPostData("android_id", "1");
+        connection.addPostData("mac_id", "1");
+        connection.addPostData("device_type", "A:android");
+        connection.addPostData("token_key", userProfile.getToken_key());
+        connection.addPostData("user_id", userProfile.getUser_id());
+        connection.addPostData("user_group", userProfile.getUser_group());
+        connection.addPostData("user_type", userProfile.getUser_type());
+        connection.addPostData("page_id", pageId);
+        connection.addPostData("task_user_id", taskUserId);
+        connection.setOnConnectionCallBackListener(listener);
+        connection.execute();
+
+    }
+
+    public void getUserList(UserProfile userProfile, Connection.OnConnectionCallBackListener listener){
+        connection = new Connection(endpoint);
+
+        connection.setDelayed(500);
+        connection.addPostData("function", "taskUserList");
+        connection.addPostData("android_id", "1");
+        connection.addPostData("mac_id", "1");
+        connection.addPostData("device_type", "A:android");
+        connection.addPostData("token_key", userProfile.getToken_key());
+        connection.addPostData("user_id", userProfile.getUser_id());
+        connection.addPostData("user_group", userProfile.getUser_group());
+        connection.addPostData("user_type", userProfile.getUser_type());
+
+        connection.setOnConnectionCallBackListener(listener);
+        connection.execute();
+
+    }
+
 
 }

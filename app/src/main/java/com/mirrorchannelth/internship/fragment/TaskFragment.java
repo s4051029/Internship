@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mirrorchannelth.internship.R;
+import com.mirrorchannelth.internship.model.ShareData;
 
 import java.io.File;
 import java.io.IOException;
@@ -155,7 +156,7 @@ public class TaskFragment extends Fragment implements View.OnClickListener {
     public void closeFragment(){
 
         getActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragmentContainer, TaskHistoryFragment.newInstance(),"TaskHistory")
+                .replace(R.id.fragmentContainer, TaskHistoryFragment.newInstance(ShareData.getUserProfile().getUser_id()),"TaskHistory")
                 .commit();
 
     }

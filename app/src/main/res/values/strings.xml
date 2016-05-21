@@ -42,5 +42,6 @@
     <string name="add_activity_toolbar_title">เพิ่มกิจกรรม</string>
     <string name="no_internet_connection">No internet connection</string>
     <string name="content_empty">Content is empty</string>
+    <string name="task_history_student_toolbar_title">รายการงาน - %s ชม</string>
 
 </resources>

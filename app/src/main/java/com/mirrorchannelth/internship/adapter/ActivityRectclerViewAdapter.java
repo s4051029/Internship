@@ -1,7 +1,6 @@
 package com.mirrorchannelth.internship.adapter;
 
 import android.content.Context;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mirrorchannelth.internship.R;
-import com.mirrorchannelth.internship.fragment.ActivityHistoryFragment;
 import com.mirrorchannelth.internship.listener.RecyclerViewItemClickListener;
 import com.mirrorchannelth.internship.model.ActivityBean;
 import com.mirrorchannelth.internship.model.ActivityItem;

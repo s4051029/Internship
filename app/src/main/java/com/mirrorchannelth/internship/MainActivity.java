@@ -10,7 +10,7 @@ import com.mirrorchannelth.internship.fragment.NewsFragment;
 import com.mirrorchannelth.internship.fragment.StudentMapFragment;
 import com.mirrorchannelth.internship.fragment.TaskFragment;
 import com.mirrorchannelth.internship.fragment.TestFragment;
-import com.mirrorchannelth.internship.fragment.UserFragmentView;
+import com.mirrorchannelth.internship.fragment.UserFragment;
 import com.mirrorchannelth.internship.model.ShareData;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.BottomBarFragment;
@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
             bottomBar.setFragmentItems(getSupportFragmentManager(), R.id.fragmentContainer,
                     new BottomBarFragment(NewsFragment.newInstance(), R.drawable.ic_motorcycle_white_24dp, R.string.main_menu_news),
-                    new BottomBarFragment(UserFragmentView.newInstance(), R.drawable.ic_assignment_black_18dp, R.string.user_toolbar_title),
+                    new BottomBarFragment(UserFragment.newInstance(), R.drawable.ic_assignment_black_18dp, R.string.user_toolbar_title),
                     new BottomBarFragment(new ActivityHistoryFragment(), R.drawable.ic_list_black_18dp, "แบบสอบถาม"),
                     new BottomBarFragment(new TestFragment(), R.drawable.ic_motorcycle_white_24dp, R.string.main_menu_map),
                     new BottomBarFragment(new StudentMapFragment(), R.drawable.ic_motorcycle_white_24dp, R.string.main_menu_profile)

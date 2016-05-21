@@ -159,23 +159,24 @@ public class NewsFragment extends Fragment implements Connection.OnConnectionCal
                 } else {
                     mRecyclerView.setLoadMoreEnabled(true);
                 }
-            }
-            if(newsBean.getNewsSize() == 0){
-                progressBar.setVisibility(View.GONE);
-                RelativeLayout rootview = (RelativeLayout) this.getView();
-                defaultDisplayview.setImage(getResources().getDrawable(R.drawable.ic_content_copy_black_48dp));
-                defaultDisplayview.setImageOnclicklistener(defaultImageListener);
-                defaultDisplayview.setText(getResources().getString(R.string.content_empty));
-                mRecyclerView.setVisibility(View.GONE);
-                rootview.addView(defaultDisplayview);
+                if(newsBean.getNewsSize() == 0){
+                    progressBar.setVisibility(View.GONE);
+                    RelativeLayout rootview = (RelativeLayout) this.getView();
+                    defaultDisplayview.setImage(getResources().getDrawable(R.drawable.ic_content_copy_black_48dp));
+                    defaultDisplayview.setImageOnclicklistener(defaultImageListener);
+                    defaultDisplayview.setText(getResources().getString(R.string.content_empty));
+                    mRecyclerView.setVisibility(View.GONE);
+                    rootview.addView(defaultDisplayview);
 
-            } else {
-                mRecyclerView.setRefreshEnabled(true);
-                mRecyclerView.setVisibility(View.VISIBLE);
+                } else {
+                    mRecyclerView.setRefreshEnabled(true);
+                    mRecyclerView.setVisibility(View.VISIBLE);
+                }
+                mRecyclerView.setRefreshing(false);
+                mRecyclerView.getLoadMoreFooterView().setVisibility(View.GONE);
+                mAdapter.notifyDataSetChanged();
             }
-            mRecyclerView.setRefreshing(false);
-            mRecyclerView.getLoadMoreFooterView().setVisibility(View.GONE);
-            mAdapter.notifyDataSetChanged();
+
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (IllegalStateException e) {
