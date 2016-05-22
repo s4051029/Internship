@@ -9,4 +9,5 @@
     <color name="decline_background_color">#C62828</color>
     <color name="pink_color_background">#E91E63</color>
     <color name="test_color">#616161</color>
+    <color name="grey_black_color">#424242</color>
 </resources>

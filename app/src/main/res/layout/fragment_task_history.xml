@@ -5,11 +5,62 @@
              tools:context="com.mirrorchannelth.internship.fragment.TaskHistoryFragment">
     <include layout="@layout/home_toolbar" android:id="@+id/toobarTaskHistory"/>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toobarTaskHistory"
+        android:id="@+id/dateFilter"
+        android:background="#E0E0E0"
+        android:gravity="center_vertical"
+        android:padding="5dp"
+        android:orientation="horizontal">
+
+        <LinearLayout android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="1"
+                      android:orientation="vertical"
+                      android:gravity="center_horizontal"
+        >
+           <TextView android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:text="วันที่เริ่มต้น"
+           />
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="22/03/2016"
+            />
+        </LinearLayout>
+        <LinearLayout android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="1"
+                      android:orientation="vertical"
+                      android:gravity="center_horizontal"
+        >
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="วันที่เริ่มต้น"
+            />
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="22/03/2016"
+            />
+        </LinearLayout>
+    <LinearLayout android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:layout_weight="1">
+        <ImageView android:layout_width="0dp"
+                   android:layout_height="wrap_content"
+                   android:layout_weight="1"
+                   android:src="@android:drawable/ic_search_category_default"/>
+
+    </LinearLayout>
+    </LinearLayout>
     <com.aspsine.irecyclerview.IRecyclerView
         android:id="@+id/task_recycler_view"
         android:scrollbars="vertical"
         android:layout_width="match_parent"
-        android:layout_below="@id/toobarTaskHistory"
+        android:layout_below="@id/dateFilter"
+
         android:layout_height="match_parent"/>
 
     <android.support.design.widget.CoordinatorLayout

@@ -88,6 +88,12 @@ public class ActivityHistoryFragment extends Fragment implements View.OnClickLis
         }
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+    }
+
     private void getActivityList(String pageId) {
 
         UserProfile userProfile = ShareData.getUserProfile();

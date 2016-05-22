@@ -3,6 +3,9 @@ package com.mirrorchannelth.internship.adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SlidingPaneLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -16,6 +19,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.daimajia.slider.library.SliderLayout;
+import com.daimajia.slider.library.SliderTypes.BaseSliderView;
+import com.daimajia.slider.library.SliderTypes.DefaultSliderView;
+import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.inthecheesefactory.thecheeselibrary.widget.AdjustableImageView;
 import com.mirrorchannelth.internship.R;
 import com.mirrorchannelth.internship.listener.RecyclerViewItemClickListener;
@@ -50,7 +57,7 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter<NewsRecyclerVi
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_news, parent, false);
         // set the view's size, margins, paddings and layout parameters
 
-        ViewHolder vh = new ViewHolder(view);
+        ViewHolder vh = new ViewHolder(view, context);
         return vh;
     }
 
@@ -62,14 +69,17 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter<NewsRecyclerVi
             holder.shortDescriptionTextview.setText(news.getNewsShortDescription());
             Date newsDate = news.getNewsDate();
             holder.dateView.setDate(newsDate);
+            holder.sliderLayout.removeAllSliders();
+        for (int i = 0; i< news.getNewsPictureUrls().length; i++) {
+            DefaultSliderView textSliderView = new DefaultSliderView(context);
+            textSliderView
+                    .image(news.getNewsPictureUrls()[i])
+                    .setScaleType(BaseSliderView.ScaleType.CenterCrop)
+                    .getPicasso();
 
-            Picasso.with(context).load("http://image.dek-d.com/25/1089566/110621445")
-                    .placeholder(context.getResources().getDrawable( R.drawable.placeholder ))
-                    .error(context.getResources().getDrawable( R.drawable.placeholder ))
-                    .into(holder.newsImageview)
-            ;
-            holder.newsImageview.setAdjustViewBounds(true);
-            holder.mainView.setVisibility(View.VISIBLE);
+            holder.sliderLayout.addSlider(textSliderView);
+        }
+        holder.sliderLayout.setDuration(6000);
 
     }
 
@@ -79,20 +89,20 @@ public class NewsRecyclerViewAdapter extends RecyclerView.Adapter<NewsRecyclerVi
         return newsBean.getNewsSize();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder{
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView headlineTextview;
         public TextView shortDescriptionTextview;
         public DateView dateView;
-        public AdjustableImageView newsImageview;
-        public RelativeLayout loadMoreView;
         public LinearLayout mainView;
-        public ViewHolder(View itemView) {
+        public SliderLayout sliderLayout;
+
+        public ViewHolder(View itemView, Context context) {
             super(itemView);
             headlineTextview = (TextView) itemView.findViewById(R.id.headlineTextview);
             shortDescriptionTextview = (TextView) itemView.findViewById(R.id.shortDescriptionTextview);
             dateView = (DateView) itemView.findViewById(R.id.dateView);
-            newsImageview = (AdjustableImageView) itemView.findViewById(R.id.newsImageview);
             mainView = (LinearLayout) itemView.findViewById(R.id.main);
+            sliderLayout = (SliderLayout) itemView.findViewById(R.id.slider);
 
         }
     }

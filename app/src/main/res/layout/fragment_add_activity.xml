@@ -1,4 +1,5 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+              xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
@@ -11,6 +12,7 @@
 
 
     </include>
+
     <ProgressBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,33 +20,54 @@
         android:visibility="gone"
         android:layout_centerInParent="true"
         />
-    <LinearLayout
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_below="@id/toolbarLayout"
+        android:id="@+id/scrollView">
+    <LinearLayout
+
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginLeft="10dp"
-        android:hint="หัวข้อ"
-        android:layout_margin="0dp"
-        android:textSize="14sp"
-        android:id="@+id/activityTitleEditText"
-        style="@style/EditTextCustomeStyle"
-        />
 
 
-    <EditText
-        android:hint="วันที่"
-        android:textSize="14sp"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginLeft="10dp"
-        android:layout_margin="0dp"
-        android:id="@+id/dateActivity"
-        style="@style/EditTextCustomeStyle"
-        />
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="10dp"
+            android:hint="หัวข้อ"
+            android:layout_margin="0dp"
+            android:textSize="14sp"
+            android:id="@+id/activityTitleEditText"
+            style="@style/EditTextCustomeStyle"
+            />
+
+
+        <LinearLayout android:layout_width="match_parent"
+                      android:layout_height="50dp"
+                      android:orientation="horizontal"
+                      android:layout_marginLeft="5dp"
+                      android:gravity="center_vertical"
+                      style="@style/EditTextCustomeStyle"
+        >
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="วันที่"
+                      android:textSize="14sp"
+
+            />
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="07/04/2559"
+                      android:background="@drawable/date_textview_background"
+                      android:layout_marginLeft="20dp"
+                      android:padding="5dp"
+                      android:id="@+id/activityDateTextview"
+                      android:textColor="@android:color/white"
+            />
+
+        </LinearLayout>
 
     <EditText
         android:layout_width="match_parent"
@@ -120,25 +143,31 @@
 
         </LinearLayout>
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_launcher"
-            android:id="@+id/image"
-            android:layout_marginTop="10dp"
-            />
-
     </LinearLayout>
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/galleryRecyclerView"
+            android:layout_marginTop="10dp"
+        >
+
+        </android.support.v7.widget.RecyclerView>
+
         <Button
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:text="บันทึก"
             android:id="@+id/saveButton"
-            android:layout_centerInParent="true"
-            />
-    </RelativeLayout>
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/round_corner_btn"
+        />
+
     </LinearLayout>
+
+
+    </ScrollView>
+
+
 </RelativeLayout>

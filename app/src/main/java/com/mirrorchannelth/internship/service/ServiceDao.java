@@ -102,7 +102,6 @@ public class ServiceDao {
         connection.addPostData("user_id", userProfile.getUser_id());
         connection.addPostData("user_group", userProfile.getUser_group());
         connection.addPostData("user_type", userProfile.getUser_type());
-
         connection.setOnConnectionCallBackListener(listener);
         connection.execute();
 

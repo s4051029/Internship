@@ -10,6 +10,15 @@
 
 
     </include>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbarLayout"
+        android:id="@+id/scrollView">
+        <LinearLayout android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      android:orientation="vertical"
+        >
         <EditText
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -21,15 +30,30 @@
             />
 
 
-        <EditText
-            android:hint="วันที่"
-            android:textSize="14sp"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginLeft="10dp"
-            android:layout_margin="0dp"
-            style="@style/EditTextCustomeStyle"
-            />
+       <LinearLayout android:layout_width="match_parent"
+                     android:layout_height="50dp"
+                     android:orientation="horizontal"
+                     android:layout_marginLeft="5dp"
+                     android:gravity="center_vertical"
+                     style="@style/EditTextCustomeStyle"
+       >
+           <TextView android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:text="วันที่"
+                     android:textSize="14sp"
+
+           />
+           <TextView android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:text="07/04/2559"
+                     android:background="@drawable/date_textview_background"
+                     android:layout_marginLeft="20dp"
+                     android:padding="5dp"
+                     android:id="@+id/taskDateTextview"
+                     android:textColor="@android:color/white"
+           />
+
+       </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -44,6 +68,7 @@
             android:layout_weight="1"
             android:textSize="14sp"
             android:layout_margin="0dp"
+            android:inputType="number"
             style="@style/EditTextCustomeStyle"
 
             />
@@ -69,7 +94,7 @@
             style="@style/EditTextCustomeStyle"
             />
 <LinearLayout
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:orientation="vertical"
     android:paddingLeft="10dp"
     android:layout_height="wrap_content">
@@ -108,28 +133,26 @@
             />
 
     </FrameLayout>
-    
-    
+
 </LinearLayout>
 
-    <ImageView
-        android:layout_width="wrap_content"
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_launcher"
-        android:id="@+id/image"
+        android:id="@+id/galleryRecyclerView"
         android:layout_marginTop="10dp"
-        />
-
-</LinearLayout>
-   <RelativeLayout
-       android:layout_width="match_parent"
-       android:layout_height="match_parent">
+    >
+    </android.support.v7.widget.RecyclerView>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="บันทึก"
-        android:layout_centerInParent="true"
+        android:id="@+id/saveButton"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/round_corner_btn"
     />
-   </RelativeLayout>
 
+</LinearLayout>
+</LinearLayout>
+</ScrollView>
 </LinearLayout>

@@ -36,6 +36,10 @@ public class NewsItem {
         for (int i = 0;i<pictureUrls.length(); i++){
             newsPictureUrls[i] = pictureUrls.optString(i);
         }
+        newsPictureUrls = new String[3];
+        newsPictureUrls[0] = "http://image.dek-d.com/25/1089566/110621445";
+        newsPictureUrls[1] = "http://e2.365dm.com/15/10/768x432/manchester-united-old-trafford-premier-league_3369609.jpg?20151028164244";
+        newsPictureUrls[2] = "http://i1.manchestereveningnews.co.uk/incoming/article9882472.ece/ALTERNATES/s1227b/JS70280311.jpg";
     }
 
     public String getNewsId() {
