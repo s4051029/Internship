@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,7 +31,13 @@ import com.mirrorchannelth.internship.model.Image;
 import com.mirrorchannelth.internship.model.ShareData;
 import com.mirrorchannelth.internship.net.Connection;
 import com.mirrorchannelth.internship.service.ServiceDao;
+import com.mirrorchannelth.internship.util.DateUtil;
+import com.mirrorchannelth.internship.util.FormValidation;
+import com.mirrorchannelth.internship.util.WindowsUtil;
 import com.mirrorchannelth.internship.view.DatePickerFragment;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -65,6 +72,7 @@ public class AddActivityFragment extends Fragment implements View.OnClickListene
     private ServiceDao serviceDao;
     private List<Image> imageList;
     private String imageUrlTemp = null;
+    private LinearLayout mainContentLayout;
 
     public AddActivityFragment() {
         // Required empty public constructor
@@ -97,6 +105,7 @@ public class AddActivityFragment extends Fragment implements View.OnClickListene
         cameraLayout = (FrameLayout) rootview.findViewById(R.id.cameraLayout);
         imageLayout = (FrameLayout) rootview.findViewById(R.id.imageLayout);
         videoLayout = (FrameLayout) rootview.findViewById(R.id.videoLayout);
+        mainContentLayout = (LinearLayout) rootview.findViewById(R.id.mainContent);
 
         galleryRecyclerView = (RecyclerView) rootview.findViewById(R.id.galleryRecyclerView);
         layoutManager = new GridLayoutManager(getActivity(),4);
@@ -121,7 +130,7 @@ public class AddActivityFragment extends Fragment implements View.OnClickListene
 
         detailActivityEditText = (EditText) rootview.findViewById(R.id.activityDetailEditText);
         saveButton = (Button) rootview.findViewById(R.id.saveButton);
-        progressbar = (ProgressBar) rootview.findViewById(R.id.activityprogressBar);
+        progressbar = (ProgressBar) rootview.findViewById(R.id.progressBar);
         saveButton.setOnClickListener(this);
         cameraLayout.setOnClickListener(this);
         imageLayout.setOnClickListener(this);
@@ -151,6 +160,7 @@ public class AddActivityFragment extends Fragment implements View.OnClickListene
                 break;
             case R.id.saveButton:
                 addActivity();
+                break;
             case R.id.activityDateTextview:
                 openDateDialog();
                 break;
@@ -164,15 +174,23 @@ public class AddActivityFragment extends Fragment implements View.OnClickListene
     }
 
     private void addActivity() {
-        progressbar.setVisibility(View.VISIBLE);
-        String title = titleactivityEditText.getText().toString();
-        String detail = detailActivityEditText.getText().toString();
-        String file = "";
-        if(imageUri !=null) {
-            file = imageUri.getPath();
-        }
 
-        serviceDao.addActivity(ShareData.getUserProfile(), title, null, detail, file, this);
+        String title = titleactivityEditText.getText().toString();
+        if(!FormValidation.isEmpty(title)){
+            titleactivityEditText.setError(getActivity().getString(R.string.empty_text_error));
+            titleactivityEditText.requestFocus();
+            return;
+        } else {
+            titleactivityEditText.setError(null);
+        }
+        mainContentLayout.setVisibility(View.GONE);
+        progressbar.setVisibility(View.VISIBLE);
+        String detail = detailActivityEditText.getText().toString();
+        String date = dateActivityTextview.getText().toString();
+        String oldateFormat = "dd/mm/yyyy";
+        String newFormatDate = "yyyy-mm-dd";
+        date = DateUtil.changeFormatDate(oldateFormat, newFormatDate, date);
+        serviceDao.addActivity(ShareData.getUserProfile(), title, date, detail, imageList, this);
 
 
     }
@@ -241,9 +259,17 @@ public class AddActivityFragment extends Fragment implements View.OnClickListene
         if (data != null) {
             ClipData clipdata = data.getClipData();
             Image image = null;
-            for (int i = 0 ; i<clipdata.getItemCount(); i++){
-                ClipData.Item item = clipdata.getItemAt(i);
-                Uri uri = item.getUri();
+            if(clipdata != null) {
+                for (int i = 0; i < clipdata.getItemCount(); i++) {
+                    ClipData.Item item = clipdata.getItemAt(i);
+                    Uri uri = item.getUri();
+                    image = new Image(uri.getPath());
+                    image.setUri(uri);
+                    image.setProtocol("file://");
+                    imageList.add(image);
+                }
+            } else {
+                Uri uri = data.getData();
                 image = new Image(uri.getPath());
                 image.setUri(uri);
                 image.setProtocol("file://");
@@ -260,10 +286,6 @@ public class AddActivityFragment extends Fragment implements View.OnClickListene
         imageList.add(image);
         adapter.notifyDataSetChanged();
     }
-
-
-
-
     private void closeFragment() {
         getActivity().getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.from_right, R.anim.to_left, R.anim.from_left, R.anim.to_right)
@@ -274,23 +296,36 @@ public class AddActivityFragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onSuccess(String result) {
-        getActivity().getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(0, 0, R.anim.from_left, R.anim.to_right)
-                .replace(R.id.fragmentContainer, ActivityHistoryFragment.newInstance())
-                .addToBackStack("HistoryFragment")
-                .commit();
-        progressbar.setVisibility(View.GONE);
-    }
 
+        try {
+            JSONObject response = new JSONObject(result);
+            if(response.getString("error").equals("0")) {
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(0, 0, R.anim.from_left, R.anim.to_right)
+                        .replace(R.id.fragmentContainer, ActivityHistoryFragment.newInstance())
+                        .addToBackStack("HistoryFragment")
+                        .commit();
+                progressbar.setVisibility(View.GONE);
+            } else {
+                progressbar.setVisibility(View.GONE);
+                mainContentLayout.setVisibility(View.VISIBLE);
+                WindowsUtil.defaultAlertDialog(getString(R.string.default_dialog_header), getString(R.string.default_message_dialog), getString(R.string.default_label_dialog_button), getActivity());
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
     @Override
     public void onLostConnection() {
-        Toast.makeText(getActivity(), "On lost connection", Toast.LENGTH_SHORT).show();
+        progressbar.setVisibility(View.GONE);
+        mainContentLayout.setVisibility(View.VISIBLE);
+        WindowsUtil.defaultAlertDialog(getString(R.string.default_dialog_header), getString(R.string.default_message_dialog), getString(R.string.default_label_dialog_button), getActivity());
     }
 
     @Override
     public void onUnreachHost() {
-        Toast.makeText(getActivity(), "On Un reachHost", Toast.LENGTH_SHORT).show();
+        progressbar.setVisibility(View.GONE);
+        mainContentLayout.setVisibility(View.VISIBLE);
+        WindowsUtil.defaultAlertDialog(getString(R.string.default_dialog_header), getString(R.string.default_message_dialog), getString(R.string.default_label_dialog_button), getActivity());
     }
-
-
 }

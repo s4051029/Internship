@@ -38,7 +38,9 @@ public class TaskBean {
             for (int i = 0; i < activity.length(); i++) {
                 JSONObject activityTmp = activity.optJSONObject(i);
                 TaskItem taskItem = new TaskItem(activityTmp);
-                taskList.add(taskItem);
+                if(!taskList.contains(taskItem)) {
+                    taskList.add( taskItem);
+                }
             }
         }
     }

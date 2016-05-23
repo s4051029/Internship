@@ -30,4 +30,11 @@ public class FormValidation {
         return false;
     }
 
+    public static boolean isEmpty(String text){
+        if("".equals(text) || null == text)
+            return false;
+        else
+            return true;
+    }
+
 }

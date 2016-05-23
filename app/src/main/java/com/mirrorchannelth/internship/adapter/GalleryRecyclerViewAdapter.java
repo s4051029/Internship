@@ -1,6 +1,7 @@
 package com.mirrorchannelth.internship.adapter;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.load.engine.Resource;
 import com.mirrorchannelth.internship.R;
 import com.mirrorchannelth.internship.model.Image;
 import com.squareup.picasso.Picasso;
@@ -42,13 +44,9 @@ public class GalleryRecyclerViewAdapter extends RecyclerView.Adapter<GalleryRecy
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Image image = imageList.get(position);
-        File file = new File(image.getUrl());
-        Uri uri = Uri.fromFile(file);
-        if (image.getUri() != null) {
-            uri = image.getUri();
-        }
-        Picasso.with(context).load(uri).resize(250,250).centerCrop().into(holder.imageView);
+        Resources res = context.getResources();
 
+        Picasso.with(context).load(image.getUrl()).resize((int)res.getDimension(R.dimen.image_gallery_item),(int)res.getDimension(R.dimen.image_gallery_item)).centerCrop().into(holder.imageView);
     }
 
 

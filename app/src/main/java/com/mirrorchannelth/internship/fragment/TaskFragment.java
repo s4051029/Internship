@@ -174,9 +174,17 @@ public class TaskFragment extends Fragment implements View.OnClickListener {
         if (data != null) {
             ClipData clipdata = data.getClipData();
             Image image = null;
-            for (int i = 0 ; i<clipdata.getItemCount(); i++){
-                ClipData.Item item = clipdata.getItemAt(i);
-                Uri uri = item.getUri();
+            if(clipdata != null) {
+                for (int i = 0; i < clipdata.getItemCount(); i++) {
+                    ClipData.Item item = clipdata.getItemAt(i);
+                    Uri uri = item.getUri();
+                    image = new Image(uri.getPath());
+                    image.setUri(uri);
+                    image.setProtocol("file://");
+                    imageList.add(image);
+                }
+            } else {
+                Uri uri = data.getData();
                 image = new Image(uri.getPath());
                 image.setUri(uri);
                 image.setProtocol("file://");
@@ -195,12 +203,11 @@ public class TaskFragment extends Fragment implements View.OnClickListener {
     }
 
     public void closeFragment(){
-
         getActivity().getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.from_right, R.anim.to_left, R.anim.from_left, R.anim.to_right)
                 .replace(R.id.fragmentContainer, TaskHistoryFragment.newInstance(ShareData.getUserProfile().getUser_id()),"TaskHistory")
+                .addToBackStack(null)
                 .commit();
-
     }
 
     private void openDateDialog() {

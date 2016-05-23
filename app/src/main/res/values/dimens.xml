@@ -6,4 +6,5 @@
     <dimen name="headline_font_size">22sp</dimen>
     <dimen name="margin_from_edge_screen">16dp</dimen>
     <dimen name="margin_from_headline">15dp</dimen>
+    <dimen name="image_gallery_item">250px</dimen>
 </resources>

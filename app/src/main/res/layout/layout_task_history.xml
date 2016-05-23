@@ -1,85 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="horizontal"
               android:layout_width="match_parent"
+              android:layout_height="wrap_content"
               android:background="@color/news_background"
-              android:layout_marginBottom="1dp"
+              android:orientation="horizontal"
+              android:paddingBottom="8dp"
               android:paddingLeft="@dimen/activity_vertical_margin"
               android:paddingRight="@dimen/activity_vertical_margin"
-              android:paddingBottom="8dp"
-              android:paddingTop="8dp"
-              android:layout_height="wrap_content">
+              android:paddingTop="8dp">
 
     <com.mirrorchannelth.internship.view.DateView
+        android:id="@+id/taskDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/taskDate"
-        ></com.mirrorchannelth.internship.view.DateView>
+    ></com.mirrorchannelth.internship.view.DateView>
     <LinearLayout
         android:layout_width="wrap_content"
-        android:orientation="vertical"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:layout_height="wrap_content">
+        android:layout_weight="1"
+        android:orientation="vertical">
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/taskTitleTextview"
-            />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+        />
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/taskDescriptionTextview"
-            />
-        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="5dp"
+        />
+        <LinearLayout
             android:id="@+id/approveButtonGroup"
-            >
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal"
+        >
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ปฏิเสธ"
                 android:background="@drawable/decline_textview_background"
-                android:textColor="@color/white"
-                android:textSize="8sp"
+                android:paddingBottom="3dp"
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
                 android:paddingTop="3dp"
-                android:paddingBottom="3dp"
-                />
+                android:text="ปฏิเสธ"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+            />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="อนุมัติ"
                 android:layout_marginLeft="10dp"
                 android:background="@drawable/approove_textview_background"
-                android:textColor="@color/white"
-                android:textSize="8sp"
+                android:paddingBottom="3dp"
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
                 android:paddingTop="3dp"
-                android:paddingBottom="3dp"
-                />
+                android:text="อนุมัติ"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+            />
         </LinearLayout>
 
     </LinearLayout>
     <FrameLayout
         android:layout_width="wrap_content"
-        android:background="@drawable/circle_shape"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_height="wrap_content">
+        android:background="@drawable/circle_shape">
         <TextView
+            android:id="@+id/taskHoursTextview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:id="@+id/taskHoursTextview"
             android:textColor="@color/white"
-            />
+        />
     </FrameLayout>
 
 </LinearLayout>

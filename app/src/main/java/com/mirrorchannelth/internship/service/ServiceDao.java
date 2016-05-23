@@ -1,7 +1,10 @@
 package com.mirrorchannelth.internship.service;
 
+import com.mirrorchannelth.internship.model.Image;
 import com.mirrorchannelth.internship.model.UserProfile;
 import com.mirrorchannelth.internship.net.Connection;
+
+import java.util.List;
 
 /**
  * Created by boss on 5/14/16.
@@ -32,7 +35,7 @@ public class ServiceDao {
         connection.execute();
 
     }
-    public void addActivity(UserProfile userProfile, String activityTitle, String activityDate, String activityDescription, String activityFile, Connection.OnConnectionCallBackListener listener){
+    public void addActivity(UserProfile userProfile, String activityTitle, String activityDate, String activityDescription, List<Image> activityFile, Connection.OnConnectionCallBackListener listener){
         connection = new Connection(endpoint);
 
         connection.setDelayed(500);
@@ -47,7 +50,11 @@ public class ServiceDao {
         connection.addPostData("activity_title", activityTitle);
         connection.addPostData("activity_date", activityDate);
         connection.addPostData("activity_description", activityDescription);
-        connection.addPostData("activity_file", activityFile);
+        if(activityFile != null) {
+            for (int i = 0; i < activityFile.size(); i++) {
+                connection.addPostData("activity_file", activityFile.get(i).getUrl());
+            }
+        }
         connection.setOnConnectionCallBackListener(listener);
         connection.execute();
 
@@ -71,7 +78,7 @@ public class ServiceDao {
 
     }
 
-    public void getTaskList(UserProfile userProfile, String pageId, String taskUserId, Connection.OnConnectionCallBackListener listener){
+    public void getTaskList(UserProfile userProfile, String pageId, String taskUserId, String startDate, String endDate, Connection.OnConnectionCallBackListener listener){
         connection = new Connection(endpoint);
 
         connection.setDelayed(500);
@@ -85,6 +92,8 @@ public class ServiceDao {
         connection.addPostData("user_type", userProfile.getUser_type());
         connection.addPostData("page_id", pageId);
         connection.addPostData("task_user_id", taskUserId);
+        connection.addPostData("date_start", startDate);
+        connection.addPostData("date_end", endDate);
         connection.setOnConnectionCallBackListener(listener);
         connection.execute();
 

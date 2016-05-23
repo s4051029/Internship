@@ -114,10 +114,6 @@ public class UserFragment extends Fragment implements RecyclerViewItemClickListe
         defaultDisplayview = new DefaultDisplayView(getActivity());
 
     }
-
-
-
-
     @Override
     public void onItemClickListener(RecyclerView.ViewHolder caller, View v) {
        UserRecyclerViewAdapter.ViewHolder holder = (UserRecyclerViewAdapter.ViewHolder) caller;

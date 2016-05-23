@@ -2,6 +2,7 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
+             android:background="@color/news_background"
              tools:context="com.mirrorchannelth.internship.fragment.ActivityHistoryFragment">
     <include layout="@layout/home_toolbar" android:id="@+id/toolbarActivity"/>
     <com.aspsine.irecyclerview.IRecyclerView

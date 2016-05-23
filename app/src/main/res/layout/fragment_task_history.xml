@@ -2,6 +2,7 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
+             android:background="@color/news_background"
              tools:context="com.mirrorchannelth.internship.fragment.TaskHistoryFragment">
     <include layout="@layout/home_toolbar" android:id="@+id/toobarTaskHistory"/>
 
@@ -27,7 +28,8 @@
            />
             <TextView android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:text="22/03/2016"
+                      android:id="@+id/startDateTextview"
+                      android:layout_marginTop="3dp"
             />
         </LinearLayout>
         <LinearLayout android:layout_width="0dp"
@@ -38,11 +40,12 @@
         >
             <TextView android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:text="วันที่เริ่มต้น"
+                      android:text="วันที่สิ้นสุด"
             />
             <TextView android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:text="22/03/2016"
+                      android:id="@+id/endDateTextview"
+                      android:layout_marginTop="3dp"
             />
         </LinearLayout>
     <LinearLayout android:layout_width="0dp"
@@ -51,6 +54,7 @@
         <ImageView android:layout_width="0dp"
                    android:layout_height="wrap_content"
                    android:layout_weight="1"
+                   android:id="@+id/searchImageview"
                    android:src="@android:drawable/ic_search_category_default"/>
 
     </LinearLayout>
@@ -60,7 +64,6 @@
         android:scrollbars="vertical"
         android:layout_width="match_parent"
         android:layout_below="@id/dateFilter"
-
         android:layout_height="match_parent"/>
 
     <android.support.design.widget.CoordinatorLayout
