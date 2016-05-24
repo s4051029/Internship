@@ -15,6 +15,10 @@ public class ActivityBean {
     public ActivityBean(JSONObject jsonObject){
         itemTotal = jsonObject.optInt("item_total");
         JSONArray activity = jsonObject.optJSONArray("activity_list");
+        addActivityList(activity);
+    }
+
+    private void addActivityList(JSONArray activity) {
         if(activity !=null) {
             for (int i = 0; i < activity.length(); i++) {
                 JSONObject activityTmp = activity.optJSONObject(i);
@@ -29,16 +33,10 @@ public class ActivityBean {
     public void AddActivity(JSONObject jsonObject){
         itemTotal = jsonObject.optInt("item_total");
         JSONArray activity = jsonObject.optJSONArray("activity_list");
-        if(activity !=null) {
-            for (int i = 0; i < activity.length(); i++) {
-                JSONObject activityTmp = activity.optJSONObject(i);
-                ActivityItem activityItem = new ActivityItem(activityTmp);
-                activityList.add(activityItem);
-            }
-        }
+        addActivityList(activity);
     }
 
-    public void AddActivityFromFront(JSONObject jsonObject){
+    public void insertActivity(JSONObject jsonObject){
         itemTotal = jsonObject.optInt("item_total");
         JSONArray activity = jsonObject.optJSONArray("activity_list");
         if(activity !=null) {

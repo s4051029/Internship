@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
@@ -6,18 +6,28 @@
               android:orientation="vertical"
              tools:context="com.mirrorchannelth.internship.fragment.TaskFragment">
     <!--3D3D3D-->
-    <include layout="@layout/home_toolbar">
+    <include layout="@layout/home_toolbar" android:id="@+id/toolbarTask">
 
 
     </include>
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:id="@+id/progressBar"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        android:indeterminateDrawable="@drawable/progressbar"
+        android:layout_height="wrap_content"/>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/toolbarLayout"
+        android:layout_below="@id/toolbarTask"
         android:id="@+id/scrollView">
         <LinearLayout android:layout_width="match_parent"
                       android:layout_height="match_parent"
                       android:orientation="vertical"
+                      android:id="@+id/mainContent"
         >
         <EditText
             android:layout_width="match_parent"
@@ -26,6 +36,7 @@
             android:hint="หัวข้อ"
             android:layout_margin="0dp"
             android:textSize="14sp"
+            android:id="@+id/titleTaskEditText"
             style="@style/EditTextCustomeStyle"
             />
 
@@ -69,6 +80,7 @@
             android:textSize="14sp"
             android:layout_margin="0dp"
             android:inputType="number"
+            android:id="@+id/houreEditText"
             style="@style/EditTextCustomeStyle"
 
             />
@@ -82,7 +94,6 @@
 
     </LinearLayout>
 
-
         <EditText
             android:layout_width="match_parent"
             android:layout_height="100dp"
@@ -91,6 +102,7 @@
             android:textSize="14sp"
             android:gravity="top|left"
             android:layout_margin="0dp"
+            android:id="@+id/descriptionEditText"
             style="@style/EditTextCustomeStyle"
             />
 <LinearLayout
@@ -155,4 +167,4 @@
 </LinearLayout>
 </LinearLayout>
 </ScrollView>
-</LinearLayout>
+</RelativeLayout>

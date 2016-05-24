@@ -20,19 +20,18 @@ public class NewsBean {
         pageId = jsonObject.optString("page_id");
         limit = jsonObject.optInt("limit");
         JSONArray news = jsonObject.optJSONArray("news");
-        if(news !=null) {
-            for (int i = 0; i < news.length(); i++) {
-                JSONObject newsTmp = news.optJSONObject(i);
-                NewsItem newsItem = new NewsItem(newsTmp);
-                newsList.add(newsItem);
-            }
-        }
+        addNewsList(news);
     }
 
     public void AddNews(JSONObject jsonObject){
         pageId = jsonObject.optString("page_id");
         limit = jsonObject.optInt("limit");
         JSONArray news = jsonObject.optJSONArray("news");
+        addNewsList(news);
+
+    }
+
+    private void addNewsList(JSONArray news) {
         if(news !=null) {
             for (int i = 0; i < news.length(); i++) {
                 JSONObject newsTmp = news.optJSONObject(i);
@@ -43,9 +42,9 @@ public class NewsBean {
 
             }
         }
-
     }
-    public void AddNewsFromFront(JSONObject jsonObject){
+
+    public void insertNews(JSONObject jsonObject){
         pageId = jsonObject.optString("page_id");
         limit = jsonObject.optInt("limit");
         JSONArray news = jsonObject.optJSONArray("news");

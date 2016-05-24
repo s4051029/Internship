@@ -116,5 +116,31 @@ public class ServiceDao {
 
     }
 
+    public void addTask(UserProfile userProfile, String taskTitle, String taskDate, String taskDescription, String hours,List<Image> taskFile, Connection.OnConnectionCallBackListener listener){
+        connection = new Connection(endpoint);
+
+        connection.setDelayed(500);
+        connection.addPostData("function", "taskSave");
+        connection.addPostData("android_id", "1");
+        connection.addPostData("mac_id", "1");
+        connection.addPostData("device_type", "A:android");
+        connection.addPostData("token_key", userProfile.getToken_key());
+        connection.addPostData("user_id", userProfile.getUser_id());
+        connection.addPostData("user_group", userProfile.getUser_group());
+        connection.addPostData("user_type", userProfile.getUser_type());
+        connection.addPostData("task_title", taskTitle);
+        connection.addFileData("task_hours", hours);
+        connection.addPostData("task_date", taskDate);
+        connection.addPostData("task_description", taskDescription);
+        if(taskFile != null) {
+            for (int i = 0; i < taskFile.size(); i++) {
+                connection.addPostData("task_picture", taskFile.get(i).getUrl());
+            }
+        }
+        connection.setOnConnectionCallBackListener(listener);
+        connection.execute();
+
+    }
+
 
 }

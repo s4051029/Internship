@@ -18,25 +18,23 @@ public class TaskBean {
         itemTotal = jsonObject.optInt("item_total");
         taskUserId = jsonObject.optString("task_user_id");
         totalHours = jsonObject.optString("task_total_hours");
-
-        JSONArray activity = jsonObject.optJSONArray("task_list");
-        if(activity !=null) {
-            for (int i = 0; i < activity.length(); i++) {
-                JSONObject activityTmp = activity.optJSONObject(i);
-                TaskItem taskItem = new TaskItem(activityTmp);
-                if(!taskList.contains(taskItem)) {
-                    taskList.add(taskItem);
-                }
-            }
-        }
+        JSONArray task_list = jsonObject.optJSONArray("task_list");
+        addTaskList(task_list);
     }
 
     public void AddTask(JSONObject jsonObject){
         itemTotal = jsonObject.optInt("item_total");
-        JSONArray activity = jsonObject.optJSONArray("task_list");
-        if(activity !=null) {
-            for (int i = 0; i < activity.length(); i++) {
-                JSONObject activityTmp = activity.optJSONObject(i);
+        taskUserId = jsonObject.optString("task_user_id");
+        totalHours = jsonObject.optString("task_total_hours");
+        JSONArray task_list = jsonObject.optJSONArray("task_list");
+        addTaskList(task_list);
+    }
+
+    private void addTaskList(JSONArray task_list) {
+
+        if(task_list !=null) {
+            for (int i = 0; i < task_list.length(); i++) {
+                JSONObject activityTmp = task_list.optJSONObject(i);
                 TaskItem taskItem = new TaskItem(activityTmp);
                 if(!taskList.contains(taskItem)) {
                     taskList.add( taskItem);
@@ -45,9 +43,11 @@ public class TaskBean {
         }
     }
 
-    public void AddTaskFromFront(JSONObject jsonObject){
+    public void insertTask(JSONObject jsonObject){
         itemTotal = jsonObject.optInt("item_total");
-        JSONArray activity = jsonObject.optJSONArray("activity_list");
+        taskUserId = jsonObject.optString("task_user_id");
+        totalHours = jsonObject.optString("task_total_hours");
+        JSONArray activity = jsonObject.optJSONArray("task_list");
         if(activity !=null) {
             for (int i = 0; i < activity.length(); i++) {
                 JSONObject activityTmp = activity.optJSONObject(i);

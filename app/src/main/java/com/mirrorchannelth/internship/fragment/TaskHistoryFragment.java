@@ -1,12 +1,14 @@
 package com.mirrorchannelth.internship.fragment;
 
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -206,7 +208,6 @@ public class TaskHistoryFragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onRefresh() {
-        isRefresh = true;
         getTaskList(pageId, taskUserId);
     }
 
@@ -225,16 +226,14 @@ public class TaskHistoryFragment extends Fragment implements View.OnClickListene
                         mRecyclerView.setIAdapter(mAdapter);
                         mRecyclerView.startAnimation(AnimationUtil.animationSlideUp(getActivity()));
                     } else {
-                        isRefresh = false;
-                        taskBean.AddTaskFromFront(resultObject);
+                        taskBean.insertTask(resultObject);
                     }
                 } else {
                     taskBean.AddTask(response.getJSONObject("result"));
                     isLoadmore = false;
                 }
                 if (taskBean.getTaskSize() == 0) {
-                    showEmptyView();
-
+                    showDefaultView(getResources().getString(R.string.content_empty), ResourcesCompat.getDrawable(getResources(), R.drawable.ic_content_copy_black_48dp, null), refreshClickListener);
                 } else {
                     mRecyclerView.setRefreshEnabled(true);
                     mRecyclerView.setVisibility(View.VISIBLE);
@@ -244,6 +243,9 @@ public class TaskHistoryFragment extends Fragment implements View.OnClickListene
                 mAdapter.notifyDataSetChanged();
                 String toolsbarTitle = String.format(toolbartitle.getText().toString(), taskBean.getTotalHours());
                 toolbartitle.setText(toolsbarTitle);
+            } else{
+                showDefaultView(getResources().getString(R.string.default_message_dialog), ResourcesCompat.getDrawable(getResources(),
+                        R.drawable.ic_refresh_black_48dp, null) , refreshClickListener);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -252,46 +254,51 @@ public class TaskHistoryFragment extends Fragment implements View.OnClickListene
         }
     }
 
-    View.OnClickListener defaultImageListener = new View.OnClickListener() {
+    View.OnClickListener refreshClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             RelativeLayout view = (RelativeLayout) getView();
             view.removeView(defaultDisplayview);
+            progressBar.setVisibility(View.VISIBLE);
             getTaskList(pageId, ShareData.getUserProfile().getUser_id());
         }
     };
 
     @Override
     public void onLostConnection() {
-        if (isLoadmore || isRefresh) {
-            mRecyclerView.setRefreshing(false);
-            View f = mRecyclerView.getLoadMoreFooterView();
-            f.setVisibility(View.GONE);
-            coordinatorLayout.setVisibility(View.VISIBLE);
-            Snackbar.make(coordinatorLayout, getActivity().getString(R.string.no_internet_connection), Snackbar.LENGTH_LONG)
-                    .show();
-        } else {
-            showEmptyView();
+        if (taskBean != null && taskBean.getTaskSize() !=0) {
+            showSnackbar(getResources().getString(R.string.no_internet_connection));
+        } else  {
+            showDefaultView(getResources().getString(R.string.no_internet_connection), ResourcesCompat.getDrawable(getResources(), R.drawable.ic_refresh_black_48dp, null) , refreshClickListener);
         }
     }
 
     @Override
     public void onUnreachHost() {
-        if (isLoadmore || isRefresh) {
-            mRecyclerView.setRefreshing(false);
-            View f = mRecyclerView.getLoadMoreFooterView();
-            f.setVisibility(View.GONE);
-            coordinatorLayout.setVisibility(View.VISIBLE);
-            Snackbar.make(coordinatorLayout, getActivity().getString(R.string.no_internet_connection), Snackbar.LENGTH_LONG)
-                    .show();
+        if (taskBean != null && taskBean.getTaskSize() !=0) {
+            showSnackbar(getResources().getString(R.string.no_internet_connection));
         } else {
-            progressBar.setVisibility(View.GONE);
-            RelativeLayout rootview = (RelativeLayout) this.getView();
-            defaultDisplayview.setImage(getResources().getDrawable(R.drawable.ic_refresh_black_48dp));
-            defaultDisplayview.setImageOnclicklistener(defaultImageListener);
-            defaultDisplayview.setText(getActivity().getString(R.string.no_internet_connection));
-            rootview.addView(defaultDisplayview);
+            showDefaultView(getResources().getString(R.string.no_internet_connection), ResourcesCompat.getDrawable(getResources(), R.drawable.ic_refresh_black_48dp, null) , refreshClickListener);
         }
+    }
+
+    private void showSnackbar(String text) {
+        mRecyclerView.setRefreshing(false);
+        View f = mRecyclerView.getLoadMoreFooterView();
+        f.setVisibility(View.GONE);
+        coordinatorLayout.setVisibility(View.VISIBLE);
+        Snackbar.make(coordinatorLayout, text, Snackbar.LENGTH_LONG)
+                .show();
+    }
+
+    private void showDefaultView(String text, Drawable drawable, View.OnClickListener onClickListener) {
+        progressBar.setVisibility(View.GONE);
+        RelativeLayout rootview = (RelativeLayout) this.getView();
+        defaultDisplayview.setImage(drawable);
+        defaultDisplayview.setImageOnclicklistener(onClickListener);
+        defaultDisplayview.setText(text);
+        mRecyclerView.setVisibility(View.GONE);
+        rootview.addView(defaultDisplayview);
     }
 
     @Override
@@ -299,13 +306,4 @@ public class TaskHistoryFragment extends Fragment implements View.OnClickListene
 
     }
 
-    private void showEmptyView() {
-        progressBar.setVisibility(View.GONE);
-        RelativeLayout rootview = (RelativeLayout) this.getView();
-        defaultDisplayview.setImage(getResources().getDrawable(R.drawable.ic_content_copy_black_48dp));
-        defaultDisplayview.setImageOnclicklistener(defaultImageListener);
-        defaultDisplayview.setText(getResources().getString(R.string.content_empty));
-        mRecyclerView.setVisibility(View.GONE);
-        rootview.addView(defaultDisplayview);
-    }
 }

@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
             bottomBar.setFragmentItems(getSupportFragmentManager(), R.id.fragmentContainer,
                     new BottomBarFragment(NewsFragment.newInstance(), R.drawable.ic_motorcycle_white_24dp, R.string.main_menu_news),
                     new BottomBarFragment(UserFragment.newInstance(), R.drawable.ic_assignment_black_18dp, R.string.user_toolbar_title),
-                    new BottomBarFragment(new ActivityHistoryFragment(), R.drawable.ic_list_black_18dp, "แบบสอบถาม"),
+                    new BottomBarFragment(new TestFragment(), R.drawable.ic_motorcycle_white_24dp, R.string.main_menu_map),
                     new BottomBarFragment(new TestFragment(), R.drawable.ic_motorcycle_white_24dp, R.string.main_menu_map),
                     new BottomBarFragment(new StudentMapFragment(), R.drawable.ic_motorcycle_white_24dp, R.string.main_menu_profile)
 
@@ -43,24 +43,22 @@ public class MainActivity extends AppCompatActivity {
 
         } else {
             bottomBar.setFragmentItems(getSupportFragmentManager(), R.id.fragmentContainer,
-                    new BottomBarFragment(NewsFragment.newInstance(), R.drawable.ic_motorcycle_white_24dp, R.string.main_menu_news),
+                    new BottomBarFragment(NewsFragment.newInstance(), R.drawable.ic_assignment_black_18dp, R.string.main_menu_news),
                     new BottomBarFragment(TaskFragment.newInstance(), R.drawable.ic_assignment_black_18dp, R.string.main_menu_task),
-                    new BottomBarFragment(AddActivityFragment.newInstance(), R.drawable.ic_motorcycle_white_24dp, R.string.main_menu_activity),
-                    new BottomBarFragment(new TestFragment(), R.drawable.ic_motorcycle_white_24dp, R.string.main_menu_map),
-                    new BottomBarFragment(new StudentMapFragment(), R.drawable.ic_motorcycle_white_24dp, R.string.main_menu_profile)
+                    new BottomBarFragment(AddActivityFragment.newInstance(), R.drawable.ic_assignment_black_18dp, R.string.main_menu_activity),
+                    new BottomBarFragment(new TestFragment(), R.drawable.ic_assignment_black_18dp, R.string.main_menu_map),
+                    new BottomBarFragment(new StudentMapFragment(), R.drawable.ic_assignment_black_18dp, R.string.main_menu_profile)
 
             );
 
         }
         // Setting colors for different tabs when there's more than three of them.
 
-        bottomBar.setActiveTabColor(R.color.test_color);
-        bottomBar.useDarkTheme(true);
-        bottomBar.mapColorForTab(0, "#f5f5f5");
-        bottomBar.mapColorForTab(1, "#f5f5f5");
-        bottomBar.mapColorForTab(2, "#f5f5f5");
-        bottomBar.mapColorForTab(3, "#f5f5f5");
-        bottomBar.mapColorForTab(4, "#f5f5f5");
+        bottomBar.mapColorForTab(0, "#26A69A");
+        bottomBar.mapColorForTab(1, "#26A69A");
+        bottomBar.mapColorForTab(2, "#26A69A");
+        bottomBar.mapColorForTab(3, "#26A69A");
+        bottomBar.mapColorForTab(4, "#26A69A");
 
     }
 

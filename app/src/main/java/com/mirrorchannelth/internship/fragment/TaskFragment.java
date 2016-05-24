@@ -12,17 +12,31 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.mirrorchannelth.internship.R;
 import com.mirrorchannelth.internship.adapter.GalleryRecyclerViewAdapter;
+import com.mirrorchannelth.internship.config.WebAPI;
 import com.mirrorchannelth.internship.model.Image;
 import com.mirrorchannelth.internship.model.ShareData;
+import com.mirrorchannelth.internship.net.Connection;
+import com.mirrorchannelth.internship.service.ServiceDao;
+import com.mirrorchannelth.internship.util.DateUtil;
+import com.mirrorchannelth.internship.util.FormValidation;
+import com.mirrorchannelth.internship.util.WindowsUtil;
 import com.mirrorchannelth.internship.view.DatePickerFragment;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -34,7 +48,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TaskFragment extends Fragment implements View.OnClickListener {
+public class TaskFragment extends Fragment implements View.OnClickListener, Connection.OnConnectionCallBackListener {
 
     private RecyclerView galleryRecyclerView;
     protected RecyclerView.LayoutManager layoutManager;
@@ -44,12 +58,19 @@ public class TaskFragment extends Fragment implements View.OnClickListener {
     private ImageView imageView;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_SELECT_IMAGE = 2;
-    private Uri imageUri;
     private TextView toolbartitle;
     private ImageView rightMenuButton;
     private TextView taskDateTextview;
     private List<Image> imageList;
     private String imageUrlTemp = null;
+    private Button saveButton;
+    private EditText descriptionEditText;
+    private EditText hourEditText;
+    private EditText titleEditText;
+    private ServiceDao serviceDao;
+    private ProgressBar progressBar;
+    private LinearLayout mainContent;
+
     public TaskFragment() {
         // Required empty public constructor
     }
@@ -64,27 +85,29 @@ public class TaskFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
        View rootview = inflater.inflate(R.layout.fragment_task, container, false);
-        initInstance(rootview);
+        bindWidget(rootview);
+        initWidget();
+        setWedgetListener();
+
         return rootview;
     }
 
-    private void initInstance(View rootview) {
-        cameraImageview = (ImageView) rootview.findViewById(R.id.cameraButton);
-        imageImageview = (ImageView) rootview.findViewById(R.id.imageButton);
-        imageView = (ImageView) rootview.findViewById(R.id.imageView);
-        toolbartitle = (TextView) rootview.findViewById(R.id.toolbar_title);
-        rightMenuButton = (ImageView) rootview.findViewById(R.id.rightMenu);
-        imageView = (ImageView) rootview.findViewById(R.id.image);
-        taskDateTextview = (TextView) rootview.findViewById(R.id.taskDateTextview);
+    private void setWedgetListener() {
 
-        galleryRecyclerView = (RecyclerView) rootview.findViewById(R.id.galleryRecyclerView);
+        rightMenuButton.setOnClickListener(this);
+        cameraImageview.setOnClickListener(this);
+        imageImageview.setOnClickListener(this);
+        taskDateTextview.setOnClickListener(this);
+        saveButton.setOnClickListener(this);
+
+    }
+
+    private void initWidget() {
         layoutManager = new GridLayoutManager(getActivity(),4);
         galleryRecyclerView.setLayoutManager(layoutManager);
         imageList = new ArrayList<Image>();
         adapter = new GalleryRecyclerViewAdapter(getActivity(), imageList);
         galleryRecyclerView.setAdapter(adapter);
-
-
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         Date date = new Date();
         String currentDate = dateFormat.format(date);
@@ -92,14 +115,26 @@ public class TaskFragment extends Fragment implements View.OnClickListener {
 
         rightMenuButton.setVisibility(View.VISIBLE);
         rightMenuButton.setImageResource(R.drawable.ic_history_white_24dp);
-
-        rightMenuButton.setOnClickListener(this);
-        cameraImageview.setOnClickListener(this);
-        imageImageview.setOnClickListener(this);
-        taskDateTextview.setOnClickListener(this);
-
-
         toolbartitle.setText(R.string.task_toolbar_title);
+
+        serviceDao = new ServiceDao(WebAPI.URL);
+    }
+
+    private void bindWidget(View rootview) {
+        mainContent = (LinearLayout) rootview.findViewById(R.id.mainContent);
+        progressBar = (ProgressBar) rootview.findViewById(R.id.progressBar);
+        cameraImageview = (ImageView) rootview.findViewById(R.id.cameraButton);
+        imageImageview = (ImageView) rootview.findViewById(R.id.imageButton);
+        imageView = (ImageView) rootview.findViewById(R.id.imageView);
+        toolbartitle = (TextView) rootview.findViewById(R.id.toolbar_title);
+        rightMenuButton = (ImageView) rootview.findViewById(R.id.rightMenu);
+        imageView = (ImageView) rootview.findViewById(R.id.image);
+        taskDateTextview = (TextView) rootview.findViewById(R.id.taskDateTextview);
+        galleryRecyclerView = (RecyclerView) rootview.findViewById(R.id.galleryRecyclerView);
+        saveButton = (Button) rootview.findViewById(R.id.saveButton);
+        titleEditText = (EditText) rootview.findViewById(R.id.titleTaskEditText);
+        hourEditText = (EditText) rootview.findViewById(R.id.houreEditText);
+        descriptionEditText = (EditText) rootview.findViewById(R.id.descriptionEditText);
 
     }
 
@@ -117,8 +152,30 @@ public class TaskFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.taskDateTextview:
                 openDateDialog();
+                break;
+            case R.id.saveButton:
+                saveTask();
+                break;
 
         }
+    }
+
+    private void saveTask() {
+
+       if(FormValidation.isEmpty(titleEditText, getActivity())) return;
+       if(FormValidation.isEmpty(hourEditText, getActivity())) return;
+       if(FormValidation.isEmpty(titleEditText, getActivity())) return;
+
+        String date = taskDateTextview.getText().toString();
+        String oldateFormat = "dd/mm/yyyy";
+        String newFormatDate = "yyyy-mm-dd";
+        date = DateUtil.changeFormatDate(oldateFormat, newFormatDate, date);
+
+        progressBar.setVisibility(View.VISIBLE);
+        mainContent.setVisibility(View.GONE);
+        serviceDao.addTask(ShareData.getUserProfile(), titleEditText.getText().toString(), date, hourEditText.getText().toString(), descriptionEditText.getText().toString(), imageList, this);
+
+
     }
 
     private void openGallery() {
@@ -216,4 +273,43 @@ public class TaskFragment extends Fragment implements View.OnClickListener {
     }
 
 
+    @Override
+    public void onSuccess(String result) {
+        progressBar.setVisibility(View.VISIBLE);
+        try {
+            JSONObject response = new JSONObject(result);
+            if(response.getString("error").equals("0")) {
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(0, 0, R.anim.from_left, R.anim.to_right)
+                        .replace(R.id.fragmentContainer, TaskHistoryFragment.newInstance(ShareData.getUserProfile().getUser_id()))
+                        .addToBackStack("taskHistory")
+                        .commit();
+                progressBar.setVisibility(View.GONE);
+            } else {
+                progressBar.setVisibility(View.GONE);
+                mainContent.setVisibility(View.VISIBLE);
+                WindowsUtil.defaultAlertDialog(getString(R.string.default_dialog_header), getString(R.string.default_message_dialog), getString(R.string.default_label_dialog_button), getActivity());
+                Log.d("Task", result);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void onLostConnection() {
+        progressBar.setVisibility(View.GONE);
+        mainContent.setVisibility(View.VISIBLE);
+        WindowsUtil.defaultAlertDialog(getString(R.string.default_dialog_header), getString(R.string.default_message_dialog), getString(R.string.default_label_dialog_button), getActivity());
+
+    }
+
+    @Override
+    public void onUnreachHost() {
+        progressBar.setVisibility(View.GONE);
+        mainContent.setVisibility(View.VISIBLE);
+        WindowsUtil.defaultAlertDialog(getString(R.string.default_dialog_header), getString(R.string.default_message_dialog), getString(R.string.default_label_dialog_button), getActivity());
+
+    }
 }

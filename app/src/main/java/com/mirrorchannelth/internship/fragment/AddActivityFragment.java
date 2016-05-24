@@ -176,13 +176,7 @@ public class AddActivityFragment extends Fragment implements View.OnClickListene
     private void addActivity() {
 
         String title = titleactivityEditText.getText().toString();
-        if(!FormValidation.isEmpty(title)){
-            titleactivityEditText.setError(getActivity().getString(R.string.empty_text_error));
-            titleactivityEditText.requestFocus();
-            return;
-        } else {
-            titleactivityEditText.setError(null);
-        }
+        if (FormValidation.isEmpty(titleactivityEditText, getActivity())) return;
         mainContentLayout.setVisibility(View.GONE);
         progressbar.setVisibility(View.VISIBLE);
         String detail = detailActivityEditText.getText().toString();
@@ -194,6 +188,8 @@ public class AddActivityFragment extends Fragment implements View.OnClickListene
 
 
     }
+
+
 
     private void openVideoCam() {
 

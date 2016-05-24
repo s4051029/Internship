@@ -125,10 +125,6 @@ public class UserFragment extends Fragment implements RecyclerViewItemClickListe
                 .commit();
     }
 
-    @Override
-    public void onClick(View v) {
-
-    }
 
     @Override
     public void onRefresh() {

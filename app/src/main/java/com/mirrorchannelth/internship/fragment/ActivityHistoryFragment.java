@@ -1,12 +1,14 @@
 package com.mirrorchannelth.internship.fragment;
 
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.aspsine.irecyclerview.IRecyclerView;
 import com.aspsine.irecyclerview.OnLoadMoreListener;
@@ -32,7 +33,6 @@ import com.mirrorchannelth.internship.model.UserProfile;
 import com.mirrorchannelth.internship.net.Connection;
 import com.mirrorchannelth.internship.service.ServiceDao;
 import com.mirrorchannelth.internship.util.AnimationUtil;
-import com.mirrorchannelth.internship.util.WindowsUtil;
 import com.mirrorchannelth.internship.view.DefaultDisplayView;
 import com.mirrorchannelth.internship.view.RefreshView;
 
@@ -51,7 +51,6 @@ public class ActivityHistoryFragment extends Fragment implements View.OnClickLis
     private ImageView backImageview;
     private ServiceDao serviceDao;
     private boolean isLoadmore;
-    private boolean isRefresh;
     private ActivityBean activityBean;
     private RefreshView header ;
     private RefreshView footer;
@@ -59,6 +58,7 @@ public class ActivityHistoryFragment extends Fragment implements View.OnClickLis
     private CoordinatorLayout coordinatorLayout;
     private DefaultDisplayView defaultDisplayview;
     private ProgressBar progressBar;
+
     public ActivityHistoryFragment() {
         // Required empty public constructor
     }
@@ -72,7 +72,9 @@ public class ActivityHistoryFragment extends Fragment implements View.OnClickLis
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootview = inflater.inflate(R.layout.fragment_activity_history, container, false);
-        initInstance(rootview);
+        bindWidget(rootview);
+        initWidget();
+        setWidgetListener();
         return rootview;
     }
 
@@ -91,23 +93,30 @@ public class ActivityHistoryFragment extends Fragment implements View.OnClickLis
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
     }
 
     private void getActivityList(String pageId) {
-
         UserProfile userProfile = ShareData.getUserProfile();
         serviceDao = new ServiceDao(WebAPI.URL);
         serviceDao.getActivityList(userProfile, pageId, this);
     }
 
-    private void initInstance(View rootview) {
+    private void bindWidget(View rootview) {
         mRecyclerView = (IRecyclerView) rootview.findViewById(R.id.activity_recycler_view);
         toolbarTitleTextview = (TextView) rootview.findViewById(R.id.toolbar_title);
         backImageview = (ImageView) rootview.findViewById(R.id.leftMenu);
         progressBar = (ProgressBar) rootview.findViewById(R.id.progressBar);
-
         coordinatorLayout = (CoordinatorLayout) rootview.findViewById(R.id.coordinatorLayout);
+
+    }
+
+    private void setWidgetListener() {
+        mRecyclerView.setOnRefreshListener(this);
+        mRecyclerView.setOnLoadMoreListener(this);
+        backImageview.setOnClickListener(this);
+    }
+
+    private void initWidget() {
         defaultDisplayview = new DefaultDisplayView(getActivity());
         backImageview.setImageResource(R.drawable.ic_arrow_back_white_24dp);
         toolbarTitleTextview.setText(R.string.activity_history_toolbar_title);
@@ -118,11 +127,9 @@ public class ActivityHistoryFragment extends Fragment implements View.OnClickLis
         footer = new RefreshView(getActivity());
         mRecyclerView.setRefreshHeaderView(header);
         mRecyclerView.setLoadMoreFooterView(footer);
-        mRecyclerView.setOnRefreshListener(this);
-        mRecyclerView.setOnLoadMoreListener(this);
-        backImageview.setOnClickListener(this);
+        mRecyclerView.setLoadMoreEnabled(true);
+        mRecyclerView.setRefreshEnabled(true);
     }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -131,12 +138,10 @@ public class ActivityHistoryFragment extends Fragment implements View.OnClickLis
                 break;
         }
     }
-
     private void closeFrament() {
         getActivity().getSupportFragmentManager()
                 .popBackStack("HistoryFragment",  FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
-
     @Override
     public void onSuccess(String result) {
         try {
@@ -152,27 +157,15 @@ public class ActivityHistoryFragment extends Fragment implements View.OnClickLis
                         AnimationSet slideupAnimation = AnimationUtil.animationSlideUp(getActivity());
                         mRecyclerView.startAnimation(slideupAnimation);
                     } else {
-                        isRefresh = false;
-                        activityBean.AddActivityFromFront(resultResponse);
+                        activityBean.insertActivity(resultResponse);
                     }
                 } else {
                         activityBean.AddActivity(resultResponse);
                         isLoadmore = false;
                 }
-                if(!WindowsUtil.isRecyclerScrollable(mRecyclerView)){
-                    mRecyclerView.setLoadMoreEnabled(false);
-                } else {
-                    mRecyclerView.setLoadMoreEnabled(true);
-                }
                 if(activityBean.getActivitySize() == 0){
-                    progressBar.setVisibility(View.GONE);
-                    RelativeLayout rootview = (RelativeLayout) this.getView();
-                    defaultDisplayview.setImage(getResources().getDrawable(R.drawable.ic_content_copy_black_48dp));
-                    defaultDisplayview.setImageOnclicklistener(defaultImageListener);
-                    defaultDisplayview.setText(getResources().getString(R.string.content_empty));
-                    mRecyclerView.setVisibility(View.GONE);
-                    rootview.addView(defaultDisplayview);
-
+                    showDefaultView(getResources().getString(R.string.content_empty),
+                            ResourcesCompat.getDrawable(getResources(), R.drawable.ic_content_copy_black_48dp, null), refreshClickListener);
                 } else {
                     mRecyclerView.setRefreshEnabled(true);
                     mRecyclerView.setVisibility(View.VISIBLE);
@@ -180,6 +173,9 @@ public class ActivityHistoryFragment extends Fragment implements View.OnClickLis
                 mRecyclerView.setRefreshing(false);
                 mRecyclerView.getLoadMoreFooterView().setVisibility(View.GONE);
                 mAdapter.notifyDataSetChanged();
+            } else {
+                showDefaultView(getResources().getString(R.string.default_message_dialog), ResourcesCompat.getDrawable(getResources(),
+                        R.drawable.ic_refresh_black_48dp, null) , refreshClickListener);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -187,26 +183,16 @@ public class ActivityHistoryFragment extends Fragment implements View.OnClickLis
             e.printStackTrace();
         }
     }
-
     @Override
     public void onLostConnection() {
         progressBar.setVisibility(View.GONE);
-
-        if(isLoadmore || isRefresh) {
-            mRecyclerView.setRefreshing(false);
-            mRecyclerView.getLoadMoreFooterView().setVisibility(View.GONE);
-            coordinatorLayout.setVisibility(View.VISIBLE);
-            Snackbar.make(coordinatorLayout, getActivity().getString(R.string.no_internet_connection), Snackbar.LENGTH_LONG)
-                    .show();
-        } else {
-            RelativeLayout rootview = (RelativeLayout) this.getView();
-            defaultDisplayview.setImage(getResources().getDrawable(R.drawable.ic_refresh_black_48dp));
-            defaultDisplayview.setImageOnclicklistener(defaultImageListener);
-            defaultDisplayview.setText(getActivity().getString(R.string.no_internet_connection));
-            rootview.addView(defaultDisplayview);
+        if (activityBean != null && activityBean.getActivitySize() !=0) {
+            showSnackbar(getResources().getString(R.string.no_internet_connection));
+        } else  {
+            showDefaultView(getResources().getString(R.string.no_internet_connection), ResourcesCompat.getDrawable(getResources(), R.drawable.ic_refresh_black_48dp, null) , refreshClickListener);
         }
     }
-    View.OnClickListener defaultImageListener = new View.OnClickListener() {
+    View.OnClickListener refreshClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             RelativeLayout view = (RelativeLayout) getView();
@@ -217,34 +203,20 @@ public class ActivityHistoryFragment extends Fragment implements View.OnClickLis
     };
     @Override
     public void onUnreachHost() {
-        if(isLoadmore || isRefresh) {
-            mRecyclerView.setRefreshing(false);
-            View f = mRecyclerView.getLoadMoreFooterView();
-            f.setVisibility(View.GONE);
-            coordinatorLayout.setVisibility(View.VISIBLE);
-            Snackbar.make(coordinatorLayout, getActivity().getString(R.string.no_internet_connection), Snackbar.LENGTH_LONG)
-                    .show();
-        } else {
-            progressBar.setVisibility(View.GONE);
-            RelativeLayout rootview = (RelativeLayout) this.getView();
-            defaultDisplayview.setImage(getResources().getDrawable(R.drawable.ic_refresh_black_48dp));
-            defaultDisplayview.setImageOnclicklistener(defaultImageListener);
-            defaultDisplayview.setText(getActivity().getString(R.string.no_internet_connection));
-            rootview.addView(defaultDisplayview);
+        progressBar.setVisibility(View.GONE);
+        if (activityBean != null && activityBean.getActivitySize() !=0) {
+            showSnackbar(getResources().getString(R.string.no_internet_connection));
+        } else  {
+            showDefaultView(getResources().getString(R.string.no_internet_connection), ResourcesCompat.getDrawable(getResources(), R.drawable.ic_refresh_black_48dp, null) , refreshClickListener);
         }
     }
-
     @Override
     public void onItemClickListener(RecyclerView.ViewHolder caller, View view) {
-        Toast.makeText(getActivity(), "On item click", Toast.LENGTH_SHORT).show();
     }
-
     @Override
     public void onRefresh() {
-        isRefresh = true;
         getActivityList(pageId);
     }
-
     @Override
     public void onLoadMore(View view) {
         isLoadmore = true;
@@ -253,6 +225,21 @@ public class ActivityHistoryFragment extends Fragment implements View.OnClickLis
         int pageId = itemTotal/10;
         getActivityList(String.valueOf(pageId));
     }
-
-
+    private void showDefaultView(String text, Drawable drawable, View.OnClickListener onClickListener) {
+        progressBar.setVisibility(View.GONE);
+        RelativeLayout rootview = (RelativeLayout) this.getView();
+        defaultDisplayview.setImage(drawable);
+        defaultDisplayview.setImageOnclicklistener(onClickListener);
+        defaultDisplayview.setText(text);
+        mRecyclerView.setVisibility(View.GONE);
+        rootview.addView(defaultDisplayview);
+    }
+    private void showSnackbar(String text) {
+        mRecyclerView.setRefreshing(false);
+        View f = mRecyclerView.getLoadMoreFooterView();
+        f.setVisibility(View.GONE);
+        coordinatorLayout.setVisibility(View.VISIBLE);
+        Snackbar.make(coordinatorLayout, text, Snackbar.LENGTH_LONG)
+                .show();
+    }
 }

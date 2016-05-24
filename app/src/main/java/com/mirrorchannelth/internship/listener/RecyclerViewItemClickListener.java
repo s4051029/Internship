@@ -12,7 +12,7 @@ import com.mirrorchannelth.internship.adapter.NewsRecyclerViewAdapter;
 /**
  * Created by boss on 4/28/16.
  */
-public interface RecyclerViewItemClickListener extends View.OnClickListener {
+public interface RecyclerViewItemClickListener {
 
    public void onItemClickListener(RecyclerView.ViewHolder caller, View view);
 }
