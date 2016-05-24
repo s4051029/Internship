@@ -35,7 +35,7 @@ public class UserBean {
         }
     }
 
-    public void AddUserItemFromFront(JSONObject jsonObject){
+    public void insertUser(JSONObject jsonObject){
         JSONArray activity = jsonObject.optJSONArray("result");
         if(activity !=null) {
             for (int i = 0; i < activity.length(); i++) {

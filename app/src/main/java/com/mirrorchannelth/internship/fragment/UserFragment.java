@@ -1,11 +1,13 @@
 package com.mirrorchannelth.internship.fragment;
 
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -29,7 +31,6 @@ import com.mirrorchannelth.internship.model.UserBean;
 import com.mirrorchannelth.internship.net.Connection;
 import com.mirrorchannelth.internship.service.ServiceDao;
 import com.mirrorchannelth.internship.util.AnimationUtil;
-import com.mirrorchannelth.internship.util.WindowsUtil;
 import com.mirrorchannelth.internship.view.DefaultDisplayView;
 import com.mirrorchannelth.internship.view.RefreshView;
 
@@ -45,15 +46,11 @@ public class UserFragment extends Fragment implements RecyclerViewItemClickListe
     private IRecyclerView mRecyclerView;
     private UserRecyclerViewAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private ImageView backButton;
-    private boolean isRefresh = false;
     private RefreshView header ;
-    private RefreshView footer;
     private ProgressBar progressBar;
     private CoordinatorLayout coordinatorLayout;
     private DefaultDisplayView defaultDisplayview;
     private String pageId = "1";
-    private String taskUserId;
     private ServiceDao serviceDao;
     private UserBean userBean;
 
@@ -73,14 +70,16 @@ public class UserFragment extends Fragment implements RecyclerViewItemClickListe
         // Inflate the layout for this fragment
         View rootview = inflater.inflate(R.layout.fragment_user, container, false);
 
-        initInstance(rootview);
-
+        bindWidget(rootview);
+        initWidget();
+        setWidgetListener();
         return rootview;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        serviceDao = new ServiceDao(WebAPI.URL);
         if (userBean != null) {
             mAdapter = new UserRecyclerViewAdapter(getActivity(), userBean, this);
             mRecyclerView.setIAdapter(mAdapter);
@@ -88,32 +87,30 @@ public class UserFragment extends Fragment implements RecyclerViewItemClickListe
             progressBar.setVisibility(View.VISIBLE);
             serviceDao.getUserList(ShareData.getUserProfile(), this);
         }
-
-
     }
 
-    private void initInstance(View rootview) {
+    private void bindWidget(View rootview) {
         toolbarTitleTextview = (TextView) rootview.findViewById(R.id.toolbar_title);
         mRecyclerView = (IRecyclerView) rootview.findViewById(R.id.userRecycleview);
+        progressBar = (ProgressBar) rootview.findViewById(R.id.progressBar);
+        coordinatorLayout = (CoordinatorLayout) rootview.findViewById(R.id.coordinatorLayout);
+    }
+
+    private void setWidgetListener() {
+        mRecyclerView.setOnRefreshListener(this);
+    }
+
+    private void initWidget() {
         mLayoutManager = new LinearLayoutManager(getContext());
         toolbarTitleTextview.setText(R.string.user_toolbar_title);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        serviceDao = new ServiceDao(WebAPI.URL);
-
-        progressBar = (ProgressBar) rootview.findViewById(R.id.taskProgressBar);
-        coordinatorLayout = (CoordinatorLayout) rootview.findViewById(R.id.coordinatorLayout);
         header = new RefreshView(getActivity());
-//        footer = new RefreshView(getActivity());
         mRecyclerView.setRefreshHeaderView(header);
-        mRecyclerView.setLoadMoreFooterView(footer);
         mRecyclerView.setRefreshEnabled(true);
-        mRecyclerView.setLoadMoreEnabled(true);
-        mRecyclerView.setOnRefreshListener(this);
-//        mRecyclerView.setOnLoadMoreListener(this);
         mRecyclerView.setRefreshing(false);
         defaultDisplayview = new DefaultDisplayView(getActivity());
-
     }
+
     @Override
     public void onItemClickListener(RecyclerView.ViewHolder caller, View v) {
        UserRecyclerViewAdapter.ViewHolder holder = (UserRecyclerViewAdapter.ViewHolder) caller;
@@ -128,14 +125,9 @@ public class UserFragment extends Fragment implements RecyclerViewItemClickListe
 
     @Override
     public void onRefresh() {
-        isRefresh = true;
         serviceDao.getUserList(ShareData.getUserProfile(), this);
     }
 
-//    @Override
-//    public void onLoadMore(View view) {
-//
-//    }
 
     @Override
     public void onSuccess(String result) {
@@ -143,7 +135,6 @@ public class UserFragment extends Fragment implements RecyclerViewItemClickListe
             progressBar.setVisibility(View.GONE);
             JSONObject response = new JSONObject(result);
             if(response.getString("error").equals("0")) {
-               // JSONObject resultResponse = response.getJSONObject("result");
                     if(userBean == null) {
                         userBean = new UserBean(response);
                         mAdapter = new UserRecyclerViewAdapter(getActivity(), userBean, this);
@@ -151,18 +142,11 @@ public class UserFragment extends Fragment implements RecyclerViewItemClickListe
                         AnimationSet slideupAnimation = AnimationUtil.animationSlideUp(getActivity());
                         mRecyclerView.startAnimation(slideupAnimation);
                     } else {
-                        isRefresh = false;
-                        userBean.AddUserItemFromFront(response);
+                        userBean.insertUser(response);
                     }
-
                 if(userBean.getUserListSize() == 0){
-                    progressBar.setVisibility(View.GONE);
-                    RelativeLayout rootview = (RelativeLayout) this.getView();
-                    defaultDisplayview.setImage(getResources().getDrawable(R.drawable.ic_content_copy_black_48dp));
-                    defaultDisplayview.setImageOnclicklistener(defaultImageListener);
-                    defaultDisplayview.setText(getResources().getString(R.string.content_empty));
-                    mRecyclerView.setVisibility(View.GONE);
-                    rootview.addView(defaultDisplayview);
+                    showDefaultView(getResources().getString(R.string.content_empty),
+                            ResourcesCompat.getDrawable(getResources(), R.drawable.ic_content_copy_black_48dp, null), refreshClickListener);
 
                 } else {
                     mRecyclerView.setRefreshEnabled(true);
@@ -170,53 +154,43 @@ public class UserFragment extends Fragment implements RecyclerViewItemClickListe
                 }
                 mRecyclerView.setRefreshing(false);
                 mAdapter.notifyDataSetChanged();
+            } else {
+                showDefaultView(getResources().getString(R.string.default_message_dialog), ResourcesCompat.getDrawable(getResources(),
+                        R.drawable.ic_refresh_black_48dp, null) , refreshClickListener);
             }
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (IllegalStateException e) {
             e.printStackTrace();
         }
-
-
-
     }
+
+    View.OnClickListener refreshClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            RelativeLayout view = (RelativeLayout) getView();
+            view.removeView(defaultDisplayview);
+            progressBar.setVisibility(View.VISIBLE);
+            serviceDao.getUserList(ShareData.getUserProfile(), UserFragment.this);
+        }
+    };
 
     @Override
     public void onLostConnection() {
-        if(userBean == null || userBean.getUserListSize() == 0) {
-            mRecyclerView.setRefreshing(false);
-            View f = mRecyclerView.getLoadMoreFooterView();
-            f.setVisibility(View.GONE);
-            coordinatorLayout.setVisibility(View.VISIBLE);
-            Snackbar.make(coordinatorLayout, getActivity().getString(R.string.no_internet_connection), Snackbar.LENGTH_LONG)
-                    .show();
-        } else {
-            progressBar.setVisibility(View.GONE);
-            RelativeLayout rootview = (RelativeLayout) this.getView();
-            defaultDisplayview.setImage(getResources().getDrawable(R.drawable.ic_refresh_black_48dp));
-            defaultDisplayview.setImageOnclicklistener(defaultImageListener);
-            defaultDisplayview.setText(getActivity().getString(R.string.no_internet_connection));
-            rootview.addView(defaultDisplayview);
+        if (userBean != null && userBean.getUserListSize() !=0) {
+            showSnackbar(getResources().getString(R.string.no_internet_connection));
+        } else  {
+            showDefaultView(getResources().getString(R.string.no_internet_connection), ResourcesCompat.getDrawable(getResources(), R.drawable.ic_refresh_black_48dp, null) , refreshClickListener);
         }
 
     }
 
     @Override
     public void onUnreachHost() {
-        if(userBean == null || userBean.getUserListSize() == 0) {
-            mRecyclerView.setRefreshing(false);
-            View f = mRecyclerView.getLoadMoreFooterView();
-            f.setVisibility(View.GONE);
-            coordinatorLayout.setVisibility(View.VISIBLE);
-            Snackbar.make(coordinatorLayout, getActivity().getString(R.string.no_internet_connection), Snackbar.LENGTH_LONG)
-                    .show();
-        } else {
-            progressBar.setVisibility(View.GONE);
-            RelativeLayout rootview = (RelativeLayout) this.getView();
-            defaultDisplayview.setImage(getResources().getDrawable(R.drawable.ic_refresh_black_48dp));
-            defaultDisplayview.setImageOnclicklistener(defaultImageListener);
-            defaultDisplayview.setText(getActivity().getString(R.string.no_internet_connection));
-            rootview.addView(defaultDisplayview);
+        if (userBean != null && userBean.getUserListSize() !=0) {
+            showSnackbar(getResources().getString(R.string.no_internet_connection));
+        } else  {
+            showDefaultView(getResources().getString(R.string.no_internet_connection), ResourcesCompat.getDrawable(getResources(), R.drawable.ic_refresh_black_48dp, null) , refreshClickListener);
         }
     }
 
@@ -229,4 +203,21 @@ public class UserFragment extends Fragment implements RecyclerViewItemClickListe
             serviceDao.getUserList(ShareData.getUserProfile(), UserFragment.this);
         }
     };
+
+    private void showDefaultView(String text, Drawable drawable, View.OnClickListener onClickListener) {
+        progressBar.setVisibility(View.GONE);
+        RelativeLayout rootview = (RelativeLayout) this.getView();
+        defaultDisplayview.setImage(drawable);
+        defaultDisplayview.setImageOnclicklistener(onClickListener);
+        defaultDisplayview.setText(text);
+        mRecyclerView.setVisibility(View.GONE);
+        rootview.addView(defaultDisplayview);
+    }
+
+    private void showSnackbar(String text) {
+        mRecyclerView.setRefreshing(false);
+        coordinatorLayout.setVisibility(View.VISIBLE);
+        Snackbar.make(coordinatorLayout, text, Snackbar.LENGTH_LONG)
+                .show();
+    }
 }
