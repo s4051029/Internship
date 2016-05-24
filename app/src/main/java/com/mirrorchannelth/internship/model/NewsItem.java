@@ -1,5 +1,8 @@
 package com.mirrorchannelth.internship.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -10,7 +13,7 @@ import java.util.Date;
 /**
  * Created by boss on 5/14/16.
  */
-public class NewsItem {
+public class NewsItem implements Parcelable {
 
     private String newsId;
     private String newsTitle;
@@ -99,4 +102,40 @@ public class NewsItem {
             return false;
         }
     }
+
+    protected NewsItem(Parcel in) {
+        newsId = in.readString();
+        newsTitle = in.readString();
+        newsShortDescription = in.readString();
+        newsFullDescription = in.readString();
+        long tmpNewsDate = in.readLong();
+        newsDate = tmpNewsDate != -1 ? new Date(tmpNewsDate) : null;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(newsId);
+        dest.writeString(newsTitle);
+        dest.writeString(newsShortDescription);
+        dest.writeString(newsFullDescription);
+        dest.writeLong(newsDate != null ? newsDate.getTime() : -1L);
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<NewsItem> CREATOR = new Parcelable.Creator<NewsItem>() {
+        @Override
+        public NewsItem createFromParcel(Parcel in) {
+            return new NewsItem(in);
+        }
+
+        @Override
+        public NewsItem[] newArray(int size) {
+            return new NewsItem[size];
+        }
+    };
 }

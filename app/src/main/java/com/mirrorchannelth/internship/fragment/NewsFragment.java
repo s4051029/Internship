@@ -8,8 +8,10 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +19,7 @@ import android.view.animation.AnimationSet;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.aspsine.irecyclerview.IRecyclerView;
 import com.aspsine.irecyclerview.OnLoadMoreListener;
@@ -55,6 +58,7 @@ public class NewsFragment extends Fragment implements Connection.OnConnectionCal
     private  DefaultDisplayView defaultDisplayview;
     private View rootview;
     private String defaultPageId = "1";
+    private Toolbar toolbar;
 
     public static NewsFragment newInstance(){
         NewsFragment newsFragment = new NewsFragment();
@@ -71,6 +75,19 @@ public class NewsFragment extends Fragment implements Connection.OnConnectionCal
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        if(savedInstanceState != null) {
+
+            newsBean = savedInstanceState.getParcelable("news");
+            mAdapter = new NewsRecyclerViewAdapter(getActivity(), newsBean, this);
+            mRecyclerView.setIAdapter(mAdapter);
+            if(newsBean.getNewsSize() == 0){
+                showDefaultView(getResources().getString(R.string.content_empty),
+                        ResourcesCompat.getDrawable(getResources(), R.drawable.ic_content_copy_black_48dp, null), refreshClickListener);
+            } else {
+                mRecyclerView.setRefreshEnabled(true);
+                mRecyclerView.setVisibility(View.VISIBLE);
+            }
+        }
         if(newsBean != null){
             mAdapter = new NewsRecyclerViewAdapter(getActivity(), newsBean, this);
             mRecyclerView.setIAdapter(mAdapter);
@@ -87,6 +104,12 @@ public class NewsFragment extends Fragment implements Connection.OnConnectionCal
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable("news", newsBean);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -97,6 +120,7 @@ public class NewsFragment extends Fragment implements Connection.OnConnectionCal
     }
 
     private void bindWidget(View rootview) {
+        toolbar = (Toolbar) rootview.findViewById(R.id.toolbar);
         mRecyclerView = (IRecyclerView) rootview.findViewById(R.id.newsRecyclerview);
         toolbartitle = (TextView) rootview.findViewById(R.id.toolbar_title);
         progressBar = (ProgressBar) rootview.findViewById(R.id.progressBar);
@@ -119,12 +143,12 @@ public class NewsFragment extends Fragment implements Connection.OnConnectionCal
         mRecyclerView.setLoadMoreEnabled(true);
         mRecyclerView.setOnRefreshListener(this);
         mRecyclerView.setOnLoadMoreListener(this);
+        serviceDao = new ServiceDao(WebAPI.URL);
 
     }
 
     private void getNewsList(String pageId) {
         progressBar.setVisibility(View.VISIBLE);
-        serviceDao = new ServiceDao(WebAPI.URL);
         serviceDao.requestNews(pageId, this, ShareData.getUserProfile() );
     }
 

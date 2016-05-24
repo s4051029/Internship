@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by boss on 5/14/16.
  */
-public class NewsBean {
+public class NewsBean implements Parcelable {
     private List<NewsItem> newsList = new ArrayList<NewsItem>();
     private String pageId;
     private int limit;
@@ -72,4 +72,45 @@ public class NewsBean {
 
         return pageId;
     }
+
+    protected NewsBean(Parcel in) {
+        if (in.readByte() == 0x01) {
+            newsList = new ArrayList<NewsItem>();
+            in.readList(newsList, NewsItem.class.getClassLoader());
+        } else {
+            newsList = null;
+        }
+        pageId = in.readString();
+        limit = in.readInt();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        if (newsList == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeList(newsList);
+        }
+        dest.writeString(pageId);
+        dest.writeInt(limit);
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<NewsBean> CREATOR = new Parcelable.Creator<NewsBean>() {
+        @Override
+        public NewsBean createFromParcel(Parcel in) {
+            return new NewsBean(in);
+        }
+
+        @Override
+        public NewsBean[] newArray(int size) {
+            return new NewsBean[size];
+        }
+    };
 }
