@@ -1,5 +1,8 @@
 package com.mirrorchannelth.internship.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.json.JSONObject;
 
 import java.text.ParseException;
@@ -9,7 +12,7 @@ import java.util.Date;
 /**
  * Created by boss on 5/14/16.
  */
-public class UserItem {
+public class UserItem implements Parcelable {
 
     private String userId;
     private String name;
@@ -67,4 +70,37 @@ public class UserItem {
         }
     }
 
+
+    protected UserItem(Parcel in) {
+        userId = in.readString();
+        name = in.readString();
+        picture = in.readString();
+        title = in.readString();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(userId);
+        dest.writeString(name);
+        dest.writeString(picture);
+        dest.writeString(title);
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<UserItem> CREATOR = new Parcelable.Creator<UserItem>() {
+        @Override
+        public UserItem createFromParcel(Parcel in) {
+            return new UserItem(in);
+        }
+
+        @Override
+        public UserItem[] newArray(int size) {
+            return new UserItem[size];
+        }
+    };
 }

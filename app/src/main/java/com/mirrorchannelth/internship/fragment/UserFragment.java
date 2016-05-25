@@ -77,9 +77,28 @@ public class UserFragment extends Fragment implements RecyclerViewItemClickListe
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable("user", userBean);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         serviceDao = new ServiceDao(WebAPI.URL);
+        if(savedInstanceState != null) {
+
+            userBean = savedInstanceState.getParcelable("news");
+            mAdapter = new UserRecyclerViewAdapter(getActivity(), userBean, this);
+            mRecyclerView.setIAdapter(mAdapter);
+            if(userBean.getUserListSize() == 0){
+                showDefaultView(getResources().getString(R.string.content_empty),
+                        ResourcesCompat.getDrawable(getResources(), R.drawable.ic_content_copy_black_48dp, null), refreshClickListener);
+            } else {
+                mRecyclerView.setRefreshEnabled(true);
+                mRecyclerView.setVisibility(View.VISIBLE);
+            }
+        }
         if (userBean != null) {
             mAdapter = new UserRecyclerViewAdapter(getActivity(), userBean, this);
             mRecyclerView.setIAdapter(mAdapter);
