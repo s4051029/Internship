@@ -33,10 +33,14 @@ public class TaskHistoryRecyclerViewAdapter extends RecyclerView.Adapter<TaskHis
     public TaskHistoryRecyclerViewAdapter() {
     }
 
-    public TaskHistoryRecyclerViewAdapter(Context context, TaskBean taskBean, RecyclerViewItemClickListener itemClickListener) {
+    public TaskHistoryRecyclerViewAdapter(Context context, RecyclerViewItemClickListener itemClickListener) {
         this.context = context;
         this.taskBean = taskBean;
         this.itemClickListener = itemClickListener;
+    }
+
+    public void setTaskBean(TaskBean taskBean) {
+        this.taskBean = taskBean;
     }
 
     @Override

@@ -1,15 +1,17 @@
 package com.mirrorchannelth.internship.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.mirrorchannelth.internship.model.TaskItem;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by boss on 5/14/16.
- */
-public class TaskBean {
+public class TaskBean implements Parcelable {
     private List<TaskItem> taskList = new ArrayList<TaskItem>();
     private int itemTotal;
     private String totalHours;
@@ -78,4 +80,47 @@ public class TaskBean {
         }
         return total;
     }
+
+    protected TaskBean(Parcel in) {
+        if (in.readByte() == 0x01) {
+            taskList = new ArrayList<TaskItem>();
+            in.readList(taskList, TaskItem.class.getClassLoader());
+        } else {
+            taskList = null;
+        }
+        itemTotal = in.readInt();
+        totalHours = in.readString();
+        taskUserId = in.readString();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        if (taskList == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeList(taskList);
+        }
+        dest.writeInt(itemTotal);
+        dest.writeString(totalHours);
+        dest.writeString(taskUserId);
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<TaskBean> CREATOR = new Parcelable.Creator<TaskBean>() {
+        @Override
+        public TaskBean createFromParcel(Parcel in) {
+            return new TaskBean(in);
+        }
+
+        @Override
+        public TaskBean[] newArray(int size) {
+            return new TaskBean[size];
+        }
+    };
 }

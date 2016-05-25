@@ -1,5 +1,8 @@
 package com.mirrorchannelth.internship.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -9,7 +12,7 @@ import java.util.List;
 /**
  * Created by boss on 5/14/16.
  */
-public class ActivityBean {
+public class ActivityBean implements Parcelable {
     private List<ActivityItem> activityList = new ArrayList<ActivityItem>();
     private int itemTotal;
     public ActivityBean(JSONObject jsonObject){
@@ -63,4 +66,43 @@ public class ActivityBean {
 
         return itemTotal;
     }
+
+    protected ActivityBean(Parcel in) {
+        if (in.readByte() == 0x01) {
+            activityList = new ArrayList<ActivityItem>();
+            in.readList(activityList, ActivityItem.class.getClassLoader());
+        } else {
+            activityList = null;
+        }
+        itemTotal = in.readInt();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        if (activityList == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeList(activityList);
+        }
+        dest.writeInt(itemTotal);
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<ActivityBean> CREATOR = new Parcelable.Creator<ActivityBean>() {
+        @Override
+        public ActivityBean createFromParcel(Parcel in) {
+            return new ActivityBean(in);
+        }
+
+        @Override
+        public ActivityBean[] newArray(int size) {
+            return new ActivityBean[size];
+        }
+    };
 }

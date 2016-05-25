@@ -21,10 +21,13 @@ public class ActivityRectclerViewAdapter extends RecyclerView.Adapter<ActivityRe
     private ActivityBean activityBean;
     private Context context;
     private RecyclerViewItemClickListener itemClickListener;
-    public ActivityRectclerViewAdapter(Context context, ActivityBean activityBean, RecyclerViewItemClickListener itemClickListener) {
-        this.activityBean = activityBean;
+    public ActivityRectclerViewAdapter(Context context, RecyclerViewItemClickListener itemClickListener) {
         this.context = context;
         this.itemClickListener = itemClickListener;
+    }
+
+    public void setActivityBean(ActivityBean activityBean) {
+        this.activityBean = activityBean;
     }
 
     @Override

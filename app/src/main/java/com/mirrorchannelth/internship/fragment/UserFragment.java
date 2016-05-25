@@ -88,7 +88,7 @@ public class UserFragment extends Fragment implements RecyclerViewItemClickListe
         serviceDao = new ServiceDao(WebAPI.URL);
         if(savedInstanceState != null) {
 
-            userBean = savedInstanceState.getParcelable("news");
+            userBean = savedInstanceState.getParcelable("user");
             mAdapter = new UserRecyclerViewAdapter(getActivity(), userBean, this);
             mRecyclerView.setIAdapter(mAdapter);
             if(userBean.getUserListSize() == 0){

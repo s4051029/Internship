@@ -18,11 +18,13 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.aspsine.irecyclerview.IRecyclerView;
 import com.aspsine.irecyclerview.OnLoadMoreListener;
 import com.aspsine.irecyclerview.OnRefreshListener;
 import com.mirrorchannelth.internship.R;
+import com.mirrorchannelth.internship.adapter.NewsRecyclerViewAdapter;
 import com.mirrorchannelth.internship.adapter.SpaceItemDecoration;
 import com.mirrorchannelth.internship.adapter.TaskHistoryRecyclerViewAdapter;
 import com.mirrorchannelth.internship.config.WebAPI;
@@ -46,7 +48,7 @@ import org.json.JSONObject;
 public class TaskHistoryFragment extends Fragment implements View.OnClickListener, OnLoadMoreListener, OnRefreshListener, Connection.OnConnectionCallBackListener, RecyclerViewItemClickListener {
     private IRecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
-    private RecyclerView.Adapter mAdapter;
+    private TaskHistoryRecyclerViewAdapter mAdapter;
     private TextView toolbartitle;
     private ImageView backButton;
     private boolean isLoadmore = false;
@@ -93,16 +95,35 @@ public class TaskHistoryFragment extends Fragment implements View.OnClickListene
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Bundle bundle = this.getArguments();
+        if(savedInstanceState != null) {
+
+            taskBean = savedInstanceState.getParcelable("task");
+            mAdapter.setTaskBean(taskBean);
+            mRecyclerView.setIAdapter(mAdapter);
+            if(taskBean.getTaskSize() == 0){
+                showDefaultView(getResources().getString(R.string.content_empty),
+                        ResourcesCompat.getDrawable(getResources(), R.drawable.ic_content_copy_black_48dp, null), refreshClickListener);
+            } else {
+                mRecyclerView.setRefreshEnabled(true);
+                mRecyclerView.setVisibility(View.VISIBLE);
+            }
+        }
         if (bundle != null) {
             taskUserId = bundle.getString("userId");
         }
         if (taskBean != null) {
-            mAdapter = new TaskHistoryRecyclerViewAdapter(getActivity(), taskBean, this);
+            mAdapter.setTaskBean(taskBean);
             mRecyclerView.setIAdapter(mAdapter);
         } else {
             progressBar.setVisibility(View.VISIBLE);
             getTaskList(pageId, taskUserId);
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable("task", taskBean);
+        super.onSaveInstanceState(outState);
     }
 
     private void bindWidget(View rootview) {
@@ -130,6 +151,8 @@ public class TaskHistoryFragment extends Fragment implements View.OnClickListene
         mRecyclerView.setRefreshEnabled(true);
         mRecyclerView.setLoadMoreEnabled(true);
         mRecyclerView.setRefreshing(false);
+        mAdapter = new TaskHistoryRecyclerViewAdapter(getActivity(), this);
+        mRecyclerView.getLoadMoreFooterView().setVisibility(View.GONE);
 
         startDateTextview.setText(DateUtil.getCurrentDate("dd/MM/yyyy"));
         endDateTextview.setText(DateUtil.getCurrentDate("dd/MM/yyyy"));
@@ -222,7 +245,7 @@ public class TaskHistoryFragment extends Fragment implements View.OnClickListene
                     JSONObject resultObject = response.getJSONObject("result");
                     if (taskBean == null) {
                         taskBean = new TaskBean(resultObject);
-                        mAdapter = new TaskHistoryRecyclerViewAdapter(getActivity(), taskBean, this);
+                        mAdapter.setTaskBean(taskBean);
                         mRecyclerView.setIAdapter(mAdapter);
                         mRecyclerView.startAnimation(AnimationUtil.animationSlideUp(getActivity()));
                     } else {
@@ -305,5 +328,4 @@ public class TaskHistoryFragment extends Fragment implements View.OnClickListene
     public void onItemClickListener(RecyclerView.ViewHolder caller, View view) {
 
     }
-
 }

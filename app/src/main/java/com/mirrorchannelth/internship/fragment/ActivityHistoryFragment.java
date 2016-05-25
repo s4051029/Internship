@@ -25,6 +25,7 @@ import com.aspsine.irecyclerview.OnLoadMoreListener;
 import com.aspsine.irecyclerview.OnRefreshListener;
 import com.mirrorchannelth.internship.R;
 import com.mirrorchannelth.internship.adapter.ActivityRectclerViewAdapter;
+import com.mirrorchannelth.internship.adapter.NewsRecyclerViewAdapter;
 import com.mirrorchannelth.internship.config.WebAPI;
 import com.mirrorchannelth.internship.listener.RecyclerViewItemClickListener;
 import com.mirrorchannelth.internship.model.ActivityBean;
@@ -46,7 +47,7 @@ public class ActivityHistoryFragment extends Fragment implements View.OnClickLis
 
     private IRecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
-    private RecyclerView.Adapter mAdapter;
+    private ActivityRectclerViewAdapter mAdapter;
     private TextView toolbarTitleTextview;
     private ImageView backImageview;
     private ServiceDao serviceDao;
@@ -81,10 +82,21 @@ public class ActivityHistoryFragment extends Fragment implements View.OnClickLis
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if(activityBean != null) {
-            mAdapter = new ActivityRectclerViewAdapter(getActivity(), activityBean, this);
+        if(savedInstanceState != null) {
+
+            activityBean = savedInstanceState.getParcelable("activity");
+            mAdapter.setActivityBean(activityBean);
             mRecyclerView.setIAdapter(mAdapter);
-        } else {
+            if(activityBean.getActivitySize() == 0){
+                showDefaultView(getResources().getString(R.string.content_empty),
+                        ResourcesCompat.getDrawable(getResources(), R.drawable.ic_content_copy_black_48dp, null), refreshClickListener);
+            } else {
+                mRecyclerView.setRefreshEnabled(true);
+                mRecyclerView.setVisibility(View.VISIBLE);
+            }
+        }
+
+        else {
                 progressBar.setVisibility(View.VISIBLE);
                 getActivityList(pageId);
         }
@@ -92,6 +104,8 @@ public class ActivityHistoryFragment extends Fragment implements View.OnClickLis
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+
+        outState.putParcelable("activity", activityBean);
         super.onSaveInstanceState(outState);
     }
 
@@ -125,10 +139,12 @@ public class ActivityHistoryFragment extends Fragment implements View.OnClickLis
         mRecyclerView.setLayoutManager(mLayoutManager);
         header = new RefreshView(getActivity());
         footer = new RefreshView(getActivity());
+        mAdapter = new ActivityRectclerViewAdapter(getActivity(), this);
         mRecyclerView.setRefreshHeaderView(header);
         mRecyclerView.setLoadMoreFooterView(footer);
         mRecyclerView.setLoadMoreEnabled(true);
         mRecyclerView.setRefreshEnabled(true);
+        mRecyclerView.getLoadMoreFooterView().setVisibility(View.GONE);
     }
     @Override
     public void onClick(View v) {
@@ -152,7 +168,7 @@ public class ActivityHistoryFragment extends Fragment implements View.OnClickLis
                 if(!isLoadmore) {
                     if(activityBean == null) {
                         activityBean = new ActivityBean(resultResponse);
-                        mAdapter = new ActivityRectclerViewAdapter(getActivity(), activityBean, this);
+                        mAdapter.setActivityBean(activityBean);
                         mRecyclerView.setIAdapter(mAdapter);
                         AnimationSet slideupAnimation = AnimationUtil.animationSlideUp(getActivity());
                         mRecyclerView.startAnimation(slideupAnimation);
