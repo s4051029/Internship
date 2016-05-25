@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--<color name="colorPrimaryDark">#f0644f</color>-->
-    <color name="colorPrimary">#D50000</color>
+    <color name="colorPrimary">#F44336</color>
     <color name="colorPrimaryDark">#A01420</color>
     <color name="news_date_background">#6D6D6D</color>
     <color name="news_background">#D6D6D6</color>

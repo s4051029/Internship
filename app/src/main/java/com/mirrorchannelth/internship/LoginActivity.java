@@ -32,7 +32,6 @@ public class LoginActivity extends AppCompatActivity implements Connection.OnCon
         setContentView(R.layout.activity_login);
         initWidget();
         loginDAO = new LoginService(WebAPI.URL);
-        loginDAO.requestLogin("employee", "1234", this);
     }
 
     public void initWidget() {
